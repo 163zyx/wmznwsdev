@@ -43,6 +43,20 @@
             </li>
           </ul>
         </div>
+        <div class="login-right">
+            <img src="../components/img/touxiang.png" alt="" />
+            <div class="user-menu">
+              <el-dropdown>
+                <span class="el-dropdown-link">
+                  智能问数用户<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item icon="el-icon-reading">个人知识库</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-close">退出</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+          </div>
       </div>
     </header>
 
