@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>办公小助手</title>
+        <link rel="stylesheet" href="../css/unpkg.com_element-ui@2.15.13_lib_theme-chalk_index.css" />
+        <link rel="stylesheet" href="../css/search.css" />
+        <script src="../js/cdn.jsdelivr.net_npm_vue@2_dist_vue.js"></script>
+        <script src="../js/unpkg.com_element-ui@2.15.13_lib_index.js"></script>
+		<script src="../js/echarts.min.js"></script>
+		<script src="../js/echarts-wordcloud.min.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <div class="search_box bin">
+                <div class="search">
+                    <el-select v-model="fields" class="search_select">
+                        <el-option value="" label="全部"></el-option>
+                        <el-option value="title" label="搜索标题"></el-option>
+                        <el-option value="content" label="搜索全文"></el-option>
+                    </el-select>
+                    <span class="line"></span>
+                    <el-input type="text" v-model="searchQuery" class="search_input"
+                        placeholder="请输入搜索内容"></el-input>
+                    <button class="search_button" @click="getSearchContentByPage">搜索</button>
+                </div>
+                <div class="search_tj">
+                    <ul>
+                        <li :class="typeId === '' ? 'active' : ''" @click="setType('', '')">全部</li>
+                        <li v-for="item of typeList" :key="item.id" :class="typeId === item.id ? 'active' : ''"
+                            @click="setType(item.id, item.indice)">{{ item.name }}
+                        </li>
+                    </ul>
+                </div>
+                <div class="category_box">
+                    <div v-if="categoryPLabel.length" class="parent_category">
+                        <span class="categoty_title">{{ pCategoryText }}：</span>
+                        <ul>
+                            <li :class="categoryPId ? '' : 'active'" @click="setCategoryPId('')">全部</li>
+                            <li v-for="item of categoryPLabel" :key="item.id"
+                                :class="categoryPId === item.id ? 'active' : ''"
+                                @click="setCategoryPId(item.id, item.name)">
+                                {{ item.name }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div v-if="categorySLabel.length" class="parent_category" style="margin-top: 11px;">
+                        <span class="categoty_title">{{ sCategoryText }}：</span>
+                        <ul>
+                            <li :class="categorySId ? '' : 'active'" @click="setCategorySId('')">全部</li>
+                            <li v-for="item of categorySLabel" :key="item.id"
+                                :class="categorySId === item.id ? 'active' : ''"
+                                @click="setCategorySId(item.id, item.name)">
+                                {{ item.name }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="search_date">
+                    <span>发布日期：</span>
+                    <el-date-picker v-model="dateRange" type="daterange" range-separator="至" size="small"
+                        value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期">
+                    </el-date-picker>
+                </div>
+            </div>
+            <div v-loading="loading" class="search_table bin">
+                <!-- <div v-if="!dataList.length" class="tishi">
+                    <img src="img/3.png" alt="">
+                    <p>当前无数据,请输入关键词搜索</p>
+                </div> -->
+                <div class="list_box">
+                    <div
+                        style="width: 764px;padding: 20px 30px 0px 30px;background-color: white;height: 788px;position: relative;">
+                        <ul class="data_list">
+                            <li v-for="item of dataList" :key="item.id" @click="viewDetail(item.id, item.index)">
+                                <el-tooltip :disabled="item.title.length < 20" popper-class="popoverBackB"
+                                    :content="item.title" placement="bottom">
+                                    <p class="data_list_title">{{ item.title }}</p>
+                                </el-tooltip>
+                                <div class="data_list_div">
+                                    <span>{{ getSource(item) }}
+                                        发布日期：{{ item.index==='graph_law'? item.releaseTime.split(' ')[0]:item.releaseTime || item.pub_date }}</span>
+                                    <span class="source_text">{{ item.eduType }}
+                                        {{ item.plate ? `· ${item.plate}` : '' }}</span>
+                                </div>
+                            </li>
+                        </ul>
+                        <div v-if="!dataList.length" class="tishi">
+                            <img src="../img/3.png" alt="">
+                            <p>当前无数据,请输入关键词搜索</p>
+                        </div>
+                        <div v-if="dataList.length" class="pagination">
+                            <span class="total">共{{ total }}条</span>
+                            <el-pagination background layout="prev, pager, next" @current-change="changePage"
+                                :total="total">
+                            </el-pagination>
+                        </div>
+                    </div>
+                    <div class="echartsKeywords">
+                        <div class="echartsKeywords-title">
+                            <div class="echartsKeywords-shuxian"></div>
+                            <span>以下是近三个月备受关注的热词</span>
+                        </div>
+                        <div id="echartsKeywords"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+					keywords: [],
+                    fields: '',
+					searchQuery: '',
+					typeList: [],
+					typeId: '',
+					categoryPLabel: [],
+					pCategoryText: '主题分类',
+					sCategoryText: '发布媒体',
+					categoryPId: '',
+					categorySLabel: [],
+					categorySId: '',
+					dateRange: '',
+					beginTime: '',
+					endTime: '',
+					loading: false,
+					dataList: [],
+					total: 0,
+                    pageNum: 1,
+					pageSize: 8,
+					indices: '',
+					categoryPName: '',
+					categorySName: '',
+                }
+            },
+            created() {
+                this.getSearchContentByPage()
+                this.getTypeList()
+				this.getKeywords()
+            },
+            watch: {
+				dateRange(val) {
+					if (val && val.length) {
+						this.beginTime = val[0]
+						this.endTime = val[1]
+					} else {
+						this.beginTime = ''
+						this.endTime = ''
+					}
+					this.getSearchContentByPage()
+				},
+			},
+            computed: {
+				getSource() {
+					return function(item) {
+						if (item.index === 'graph_news') {
+							return `发布媒体：${item.mediaName}`
+						} else if (item.index === 'graph_dangzheng') {
+							return `来源：${item.source}`
+						} else if (item.index === 'graph_policy') {
+							return item.issuing_agency != null ? `来源部门：${item.issuing_agency}` : ``
+						}
+						return ''
+					}
+				}
+			},
+            methods: {
+                initEcharts() {
+					var chartDom = document.getElementById('echartsKeywords');
+					var myChart = echarts.init(chartDom);
+					let option = {
+						// title: {
+						// 	text: '以下是一些最近三个月内出现的热词：',
+						// 	x: 'center',
+						// 	top: 40,
+						// 	textStyle: {
+						// 		color: '#0000FF'
+						// 	}
+						// },
+						series: [{
+							type: "wordCloud",
+							sizeRange: [12, 50],
+							rotationRange: [0, 0],
+							rotationStep: 45,
+							gridSize: 17,
+							// shape: "pentagon",
+							shape: "circle",
+							width: "100%",
+							height: "70%",
+							drawOutOfBound: false,
+							textStyle: {
+								color: function() {
+									return (
+										"rgb(" + [
+											Math.round(Math.random() * 160),
+											Math.round(Math.random() * 160),
+											Math.round(Math.random() * 160),
+										].join(",") +
+										")"
+									);
+								},
+							},
+							emphasis: {
+								textStyle: {
+									shadowBlur: 10,
+									shadowColor: "#333",
+									color: "red",
+								},
+							},
+							data: this.keywords,
+						}, ],
+					};
+					option && myChart.setOption(option);
+					myChart.on('click', (params) => {
+						if (params.data && params.data.name) {
+							this.searchQuery = params.data.name
+							this.getSearchContentByPage()
+						}
+					})
+				},
+				getKeywords() {
+					var that = this
+					fetch('http://10.20.13.201/edu/getWordCloud', {
+						method: 'POST',
+					}).then(function(data) {
+						return data.text()
+					}).then(function(data) {
+						var res = JSON.parse(data)
+						if (res.code === 1001) {
+							that.keywords = res.data
+							that.$nextTick(() => {
+								that.initEcharts()
+							})
+						} else {
+							that.$message.console.error(res.msg);
+						}
+					})
+					that.$nextTick(() => {
+						that.initEcharts()
+					})
+				},
+				getLawTimeliness() {
+					var that = this
+					fetch('http://10.20.13.201/edu/law/getLawTimeliness', {
+						method: 'POST',
+					}).then(function(data) {
+						return data.text()
+					}).then(function(data) {
+						var res = JSON.parse(data)
+						if (res.code === 1001) {
+							that.categorySLabel = res.data
+						} else {
+							that.$message.console.error(res.msg);
+						}
+					})
+				},
+				getLawType() {
+					var that = this
+					fetch('http://10.20.13.201/edu/law/getLawType', {
+						method: 'POST',
+					}).then(function(data) {
+						return data.text()
+					}).then(function(data) {
+						var res = JSON.parse(data)
+						if (res.code === 1001) {
+							that.categoryPLabel = res.data.map(v => {
+								return {
+									id: v.id,
+									name: v.title
+								}
+							})
+						} else {
+							that.$message.console.error(res.msg);
+						}
+					})
+				},
+				getSecondType() {
+					var that = this
+					fetch('http://10.20.13.201/edu/dangzheng/getSecondType?parentId=' + this.categoryPId, {
+						method: 'get',
+						// data: JSON.stringify({parentId: that.categoryPId})
+					}).then(function(data) {
+						return data.text()
+					}).then(function(data) {
+						var res = JSON.parse(data)
+						if (res.code === 1001) {
+							that.categorySLabel = res.data.map(v => {
+								return {
+									id: v.id,
+									name: v.title
+								}
+							})
+						} else {
+							that.$message.console.error(res.msg);
+						}
+					})
+				},
+				getParentType() {
+					var that = this
+					fetch('http://10.20.13.201/edu/dangzheng/getParentType', {
+						method: 'POST',
+					}).then(function(data) {
+						return data.text()
+					}).then(function(data) {
+						var res = JSON.parse(data)
+						if (res.code === 1001) {
+							that.categoryPLabel = res.data.map(v => {
+								return {
+									id: v.id,
+									name: v.title
+								}
+							})
+						} else {
+							that.$message.console.error(res.msg);
+						}
+					})
+				},
+				getNewsMedia() {
+					var that = this
+					fetch('http://10.20.13.201/edu/news/getNewsMedia', {
+						method: 'POST',
+					}).then(function(data) {
+						return data.text()
+					}).then(function(data) {
+						var res = JSON.parse(data)
+						if (res.code === 1001) {
+							that.categorySLabel = res.data.map(v => {
+								return {
+									id: v.id,
+									name: v.mediaName
+								}
+							})
+						} else {
+							that.$message.console.error(res.msg);
+						}
+					})
+				},
+                
+				getNewsType() {
+					var that = this
+					fetch('http://10.20.13.201/edu/news/getNewsType', {
+						method: 'POST',
+					}).then(function(data) {
+						return data.text()
+					}).then(function(data) {
+						var res = JSON.parse(data)
+						if (res.code === 1001) {
+							that.categoryPLabel = res.data
+						} else {
+							that.$message.console.error(res.msg);
+						}
+					})
+				},
+				getPolicyLabel() {
+					var that = this
+					fetch('http://10.20.13.201/edu/policy/getPolicyLabel', {
+						method: 'POST',
+					}).then(function(data) {
+						return data.text()
+					}).then(function(data) {
+						var res = JSON.parse(data)
+						if (res.code === 1001) {
+							that.categoryPLabel = res.data.map(v => {
+								return {
+									id: v.id,
+									name: v.value
+								}
+							})
+						} else {
+							that.$message.console.error(res.msg);
+						}
+					})
+				},
+				getTypeList() {
+					var that = this
+					fetch('http://10.20.13.201/edu/getEduTypeList', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						}
+					}).then(function(data) {
+						return data.text()
+					}).then(function(data) {
+						var res = JSON.parse(data)
+						if (res.code === 1001) {
+							that.typeList = res.data
+						} else {
+							that.$message.console.error(res.msg);
+						}
+					})
+				},
+			    getSearchContentByPage() {
+					var that = this
+					var data = {
+						indices: this.indices ? [this.indices] : ["graph_policy", "graph_dangzheng", "graph_news",
+							"graph_law"
+						],
+						fields: (function() {
+							if (that.fields) {
+								return [that.fields]
+							} else {
+								return ['title', 'content']
+							}
+						})(),
+						searchQuery: this.searchQuery,
+						labels: (() => {
+							if (this.indices === 'graph_dangzheng') {
+								return {
+									graph_dangzheng: [{
+										parentLabel: this.categoryPName ? [this.categoryPName] :
+										[],
+										label: this.categorySName ? [this.categorySName] : []
+									}]
+								}
+							} else if (this.indices === 'graph_news') {
+								return {
+									graph_news: [{
+										plate: this.categoryPName ? [this.categoryPName] : [],
+										mediaName: this.categorySName ? [this.categorySName] : []
+									}]
+								}
+							} else if (this.indices === 'graph_law') {
+								return {
+									graph_law: [{
+										label: this.categoryPName ? [this.categoryPName] : [],
+										timeliness: this.categorySName ? [this.categorySName] : []
+									}]
+								}
+							} else if (this.indices === 'graph_policy') {
+								return {
+									graph_policy: [{
+										label: this.categoryPName ? [this.categoryPName] : [],
+									}]
+								}
+							}
+						})(),
+						beginTime: this.beginTime,
+						endTime: this.endTime,
+						pageNum: this.pageNum,
+						pageSize: this.pageSize,
+					}
+					this.loading = true
+					fetch('http://10.20.13.201/edu/getSearchContentByPage', {
+						method: 'POST',
+						headers: {
+							"Content-type": "application/json"
+						},
+						body: JSON.stringify(data)
+					}).then(function(data) {
+						return data.text()
+					}).then(function(data) {
+						that.loading = false
+						var res = JSON.parse(data)
+						if (res.code === 1001) {
+							that.dataList = res.data.records
+							that.total = res.data.total
+						} else {
+							that.$message.console.error(res.msg);
+						}
+					}).catch((err) => {
+                        console.log(err);
+                        this.loading = false
+                    })
+				},
+                setType(id, indices) {
+					this.typeId = id
+					this.indices = indices
+					if (id === 1) {
+						this.pCategoryText = '主题分类'
+						this.categorySLabel = []
+						//this.getPolicyLabel()
+						this.categoryPLabel = ''
+					} else if (id === 2) {
+						this.pCategoryText = '时政新闻'
+						this.sCategoryText = '发布媒体'
+						this.getNewsType()
+						this.getNewsMedia()
+					} else if (id === 3) {
+						this.pCategoryText = '党政分类'
+						this.sCategoryText = '二级分类'
+						this.categorySLabel = []
+						this.getParentType()
+						// this.getSecondType()
+					} else if (id === 4) {
+						this.pCategoryText = '类型'
+						this.sCategoryText = '时效性'
+						this.getLawType()
+						this.getLawTimeliness()
+					} else {
+						this.categoryPLabel = []
+						this.categorySLabel = []
+					}
+					this.categoryPId = ''
+					this.categorySId = ''
+					this.categoryPName = ''
+					this.categorySName = ''
+					this.getSearchContentByPage()
+				},
+				setCategoryPId(id, name) {
+					this.categoryPId = id
+					this.categoryPName = name
+					this.getSearchContentByPage()
+					if (this.typeId === 3) {
+						this.getSecondType()
+					}
+				},
+                setCategorySId(id, name) {
+					this.categorySId = id
+					this.categorySName = name
+					this.getSearchContentByPage()
+				},
+                viewDetail(id, index) {
+					window.location.href = `./detail.html?id=${id}&index=${index}`
+				},
+				changePage(page) {
+					this.pageNum = page
+					this.getSearchContentByPage()
+				},
+
+			}
+        })
+    </script>
+</html>

@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>教育政策文库</title>
+  <link rel="stylesheet" href="../css/unpkg.com_element-ui@2.15.13_lib_theme-chalk_index.css">
+  <script src="../js/cdn.jsdelivr.net_npm_vue@2_dist_vue.js"></script>
+  <script src="../js/unpkg.com_element-ui@2.15.13_lib_index.js"></script>
+  <script src="../js/echarts.min.js"></script>
+  <link rel="stylesheet" href="../css/detail.css">
+</head>
+<body>
+<div id="app">
+  <div class="library_detail_moe">
+    <main class="library_content">
+      <div class="content_w">
+        <div class="detail_info">
+          <img src="../img/back.png" @click="back"/>
+          <div
+            class="info_left"
+            :style="{
+              width: index === 'graph_policy' && detail.info_index!=null ? '833px' : '100%',
+              height: index === 'graph_policy' && detail.info_index!=null ? '479px' : 'auto'
+            }"
+          >
+            <h2 class="detail_title">{{ detail.title }}</h2>
+            <p v-if="detail.releaseTime || detail.pub_date" class="detail_subtitle" :style="{ textAlign: index === 'graph_policy' ? 'right' : 'center' }">
+              {{ index === 'graph_policy' ? detail.issued_number : `发布时间：${index==='graph_law'? detail.releaseTime.split(' ')[0]:detail.releaseTime || detail.pub_date} &nbsp;发布来源：${detail.mediaName || detail.source || detail.issuing_agency}` }}
+            </p>
+            <div class="detail_content">
+              <p
+                v-html="detail.content"
+                :style="{
+                  height: index === 'graph_policy' ? '242px' : 'auto'
+                }"
+              ></p>
+            </div>
+            <div v-if="index === 'graph_policy'" class="detail_depart">{{ detail.issuing_agency }}</div>
+            <div v-if="index === 'graph_policy'" class="detail_time">{{ detail.gen_date }}</div>
+          </div>
+          <div v-if="index === 'graph_policy' && detail.info_index !=null" class="info_right">
+            <p><span>信息名称:</span> {{ detail.title }}</p>
+            <p><span>信息索引:</span> {{ detail.info_index }}</p>
+            <p><span>生成日期:</span> {{ detail.gen_date }}</p>
+            <p><span>发文机构:</span> {{ detail.issuing_agency }}</p>
+            <p><span>发文字号:</span> {{ detail.issued_number }}</p>
+            <p><span>信息类别:</span> {{ detail.info_class }}</p>
+            <p>
+              <el-tooltip popper-class="tip_contentOverview" effect="dark" :content="detail.content_overview"
+                          placement="top">
+                <span style="font-weight: 400;">
+                  <span style="font-weight: bold;">内容概述:</span> {{ detail.content_overview }}
+                </span>
+              </el-tooltip>
+            </p>
+          </div>
+        </div>
+        <h2 class="title">
+          关联信息
+        </h2>
+        <div class="library_echarts" id="echartsMain"></div>
+        <h2 class="title">
+          相关信息推荐
+        </h2>
+        <div class="detail_list">
+          <ul class="library_list">
+            <li v-for="item of getRecommendList(0)" @click="viewDetail(item.id, item.indice)">
+              <div class="item_title">{{ item.title }}</div>
+              <div class="item_info">
+                <span>{{ getSource(item) }} 发布日期：{{ item.releaseTime || item.pub_date }}</span>
+                <span class="source_text">{{ getText }}</span>
+              </div>
+            </li>
+          </ul>
+          <ul class="library_list">
+            <li v-for="item of getRecommendList(4)" @click="viewDetail(item.id, item.indice)">
+              <div class="item_title">{{ item.title }}</div>
+              <div class="item_info">
+                <span>{{ getSource(item) }} 发布日期：{{ item.releaseTime || item.pub_date }}</span>
+                <span class="source_text">{{ getText }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </main>
+    <!-- <footer>
+      <p>版权所有：中华人民共和国教育部</p>
+      <p>
+        <span>教育部教育管理信息中心</span>
+      </p>
+    </footer> -->
+  </div>
+</div>
+<script type="module">
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        detail: {},
+        recommendList: [],
+        relevancyInfo: [],
+        id: this.getQueryString('id'),
+        index: this.getQueryString('index'),
+      }
+    },
+    computed: {
+      getRecommendList() {
+        return function (number) {
+          return this.recommendList.concat([]).splice(number, number + 4)
+        }
+      },
+      getText() {
+        if (this.index === 'graph_policy') {
+          return '教育文库'
+        } else if (this.index === 'graph_news') {
+          return '时政新闻'
+        } else if (this.index === 'graph_dangzheng') {
+          return '党政文库'
+        } else if (this.index === 'graph_law') {
+          return '法律法规'
+        }
+        return ''
+      },
+      getSource() {
+        return function (item) {
+          if (item.index === 'graph_news') {
+            return `发布媒体：${item.mediaName}`
+          } else if (item.index === 'graph_dangzheng') {
+            return `来源：${item.source}`
+          } else if (item.index === 'graph_policy') {
+            return `来源部门：${item.issuing_agency}`
+          }
+          return ''
+        }
+      }
+    },
+    watch: {
+      $route() {
+        this.getDetail()
+        this.getRecommend()
+        this.getRelevancyInfo()
+      }
+    },
+    created() {
+      this.getDetail()
+      this.getRecommend()
+      this.getRelevancyInfo()
+    },
+    methods: {
+      getDetail() {
+        var that = this
+        fetch('http://10.20.13.201/edu/getContentByIdAndIndex?index='+this.index+"&id="+this.id, {
+          method: 'get',
+          // headers: {
+          //   "Content-Type": "application/x-www-form-urlencoded"
+          // },
+          // body: JSON.stringify({
+          //   id: this.id,
+          //   index: this.index,
+          // })
+        }).then(function (data) {
+          return data.text()
+        }).then(function (data) {
+          var res = JSON.parse(data)
+          if (res.code === 1001) {
+            that.detail = res.data
+          } else {
+            that.$message.error(res.msg)
+          }
+        })
+      },
+      getRecommend() {
+        var that = this
+        fetch('http://10.20.13.201/edu/getRecommendByID?index='+this.index+"&id="+this.id, {
+          method: 'get',
+          // headers: {
+          //   "Content-Type": "application/form-data;charset=UTF-8"
+          // },
+          // body: JSON.stringify({
+          //   id: this.id,
+          //   index: this.index,
+          // })
+        }).then(function (data) {
+          return data.text()
+        }).then(function (data) {
+          var res = JSON.parse(data)
+          if (res.code === 1001) {
+            that.recommendList = res.data
+          } else {
+            that.$message.error(res.msg)
+          }
+        })
+      },
+      getRelevancyInfo() {
+        var that = this
+        fetch('http://10.20.13.201/edu/getTraceGraphById?index='+this.index+"&id="+this.id, {
+          method: 'get',
+          // headers: {
+          //   "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+          // },
+          // body: JSON.stringify({
+          //   id: this.id,
+          //   index: this.index,
+          // })
+        }).then(function (data) {
+          return data.text()
+        }).then(function (data) {
+          var res = JSON.parse(data)
+          if (res.code === 1001) {
+            that.relevancyInfo = res.data
+            that.$nextTick(() => {
+              that.initEcharts(res.data.nodes, res.data.links, res.data.categories)
+            })
+          } else {
+            that.$message.error(res.msg)
+          }
+        })
+      },
+      viewDetail(id, indices) {
+        window.location.href = `detail.html?id=${id}&index=${indices}`
+      },
+      initEcharts(nodes, links, categories) {
+        var chartDom = document.getElementById('echartsMain');
+        var myChart = echarts.init(chartDom);
+        var symbolSizeList = nodes.map(v => v.symbolSize)
+        let option = {
+          animationDurationUpdate: 100,
+          tooltip: {
+            textStyle: {
+              width: 500,
+            },
+            overflow: 'break',
+            formatter: (params) => {
+              var property = params.data.property
+              var info = ''
+              for (const key in params.data.property) {
+                info += key + '：' + params.data.property[key] + ' <br/>'
+              }
+              return info
+            },
+          },
+          series: [
+            {
+              type: 'graph',
+              layout: 'force',
+              nodes: nodes,
+              links: links,
+              categories: categories,
+              draggable: true,
+              // itemStyle: {
+              //   color: function () {
+              //     return (
+              //       "rgb(" +
+              //       [
+              //         Math.round(Math.random() * 160),
+              //         Math.round(Math.random() * 160),
+              //         Math.round(Math.random() * 160),
+              //       ].join(",") +
+              //       ")"
+              //     );
+              //   },
+              // },
+              label: {
+                show: true,
+                position: "bottom",
+                distance: 5,
+                fontSize: 12,
+                align: "center",
+              },
+              autoCurveness: 0.01, //多条边的时候，自动计算曲率
+              edgeLabel: {//边的设置
+                show: true,
+                position: "middle",
+                fontSize: 12,
+                formatter: (params) => {
+                  return params.data.name;
+                },
+              },
+              edgeSymbol: ["circle", "arrow"], //边两边的类型
+              force: {
+                repulsion: 50,
+                gravity: 0.01,
+                edgeLength: 200
+              }
+            },
+          ],
+        };
+        option && myChart.setOption(option);
+        myChart.on('click', (params) => {
+          if (params.data && params.data.category === 6 && params.data.property['发布日期']) {
+            var id = params.data.id.split('_')[1]
+            this.viewDetail(id, params.data.indice)
+          } else if (params.data && (params.data.category === 7 || params.data.category === 9 || params.data.category === 11)) {
+            var id = params.data.id.split('_')[1]
+            this.viewDetail(id, params.data.indice)
+          }
+        })
+      },
+      getQueryString(name) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        let r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+          return decodeURIComponent(r[2])
+        }
+        return null
+      },
+      back() {
+        window.location.href = './search.html'
+      }
+    }
+  })
+</script>
+</body>
+</html>

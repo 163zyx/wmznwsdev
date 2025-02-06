@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>办公小助手</title>
+        <link rel="stylesheet" href="../css/unpkg.com_element-ui@2.15.13_lib_theme-chalk_index.css" />
+        <link rel="stylesheet" href="../css/search.css" />
+        <script src="../js/cdn.jsdelivr.net_npm_vue@2_dist_vue.js"></script>
+        <script src="../js/unpkg.com_element-ui@2.15.13_lib_index.js"></script>
+        <script src="../js/tinymce.min.js"></script>
+    </head>
+    <style>
+        .xzbox {
+            height: calc(100vh - 40px);
+        }
+    </style>
+    <body>
+        <div id="app">
+            <template>
+				<div class="xzbox bin">
+					<div class="xz-left">
+						<div class="xz-left-title">
+							<div class="xz-left-title-shuxian"></div>
+							提问历史记录
+						</div>
+						<div class="xz-left-list">
+							<div class="xz-left-list-item" v-for="(item,index) in chatData" @click="clickChatText(item.query)">
+								<p class="title">{{ item.query }}</p>
+								<p class="time">{{ timestampToTime(item.time) }}</p>
+							</div>
+						</div>
+					</div>
+					<div class="xz-right">
+						<div class="xz-right-main chat">
+							<div class="dfxx">
+								<img src="../img/avatar.png" class="img" alt="" />
+								<div class="dfxx-right">
+									<p class="dfxx-right-name">您好，我是数据问答小助手</p>
+									<p class="dfxx-right-content">我可以为您解答教育数据相关的问题，目前我已经学习到的数据包含2020-2022年度各级各类学生、教师及学校的全国（不包含港澳台地区）的部分综合统计数据。</p>
+									<div class="cnxw">
+										<p class="cnxw-title">请试着这样问我</p>
+										<div class="cnxw-content-box">
+											<ul>
+												<li @click="copyTemplate('2022年广东省有多少中职学校')">
+													2022年广东省有多少中职学校</li>
+												<li @click="copyTemplate('2020-2022年北京初中教师中博士学历的教师分别有多少人')">
+													2020-2022年北京初中教师中博士学历的教师分别有多少人</li>
+												</li>
+												<li @click="copyTemplate('2022年全国普通高校专任教师有多少人')">
+													2022年全国普通高校专任教师有多少人</li>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<template v-if="chatData.length" v-for="(item,index) in chatData">
+								<div class="my-query">
+									<p class="content">{{ item.query }}</p>
+									<img src="../img/touxiang.png" alt="" class="img" />
+								</div>
+								<div v-if="item.loading" class="loading">
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+								</div>
+								<div v-if="!item.loading">
+									<div class="dfquery">
+										<img src="../img/avatar.png" class="img" alt="" />
+										<div class="content" :class="'content-df'+ index"
+											style="display: flex;flex-direction: column;align-items: flex-start;">
+											<p>{{ item.response || '未找到该内容' }}</p>
+											<div style="width: 100%;display: flex;justify-content: flex-end;"
+												class="duifangcontent" v-if="item.copy">
+												<div class="dfcontent-bot" @click="copydf(index)">
+													<img src="../img/copy.png" alt=""
+														style="width: 21px;margin-right: 5px;" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</template>
+						</div>
+						<div class="xz-right-foot">
+							<div id="useTemplate" v-if="useTemplate"></div>
+							<input v-else v-model="chatText" type="text" placeholder="请输入问题相关描述"
+								@keydown.enter="sendChat()" />
+							<el-button :disabled="chatLock" @click="sendChat()">发送</button>
+						</div>
+					</div>
+				</div>
+			</template>
+        </div>
+    </body> 
+	<style>
+		#useTemplate{
+			width: 100%;
+			margin-right: 10px;
+			height: 44px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			line-height: 44px;
+			padding: 0 10px;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+		}
+		#useTemplate .can-edit{
+			display: inline-block;
+			width: 100%;
+			border: 0;
+			height: 30px;
+			background-color: #E5F9FE;
+		}
+		#useTemplate .can-edit:focus-visible{
+			border: none;
+			outline: none;
+		}
+	</style> 
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+					chatText:undefined,
+					chatData:[],
+					chatLock:false,
+					useTemplate: false
+                }
+            },
+            methods: {
+				// 时间戳转时间
+				timestampToTime(timestamp) {
+					// 时间戳为10位需*1000，时间戳为13位不需乘1000
+					var date = new Date(timestamp);
+					var Y = date.getFullYear() + "-";
+					var M =
+						(date.getMonth() + 1 < 10 ?
+							"0" + (date.getMonth() + 1) :
+							date.getMonth() + 1) + "-";
+					var D = (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + " ";
+					var h = (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) + ":";
+					var m = (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + ":";
+					var s = (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds());
+					return Y + M + D + h + m + s;
+				},
+                // 点击历史提问记录
+				clickChatText(query) {
+					var that = this
+					const box1 = document.getElementsByClassName('chat')[0]
+					const box = document.getElementsByClassName('chat')[0].getElementsByClassName('my-query')
+					if (box && box.length) {
+						for (var i = 0; i < box.length; i++) {
+							console.log(box[i].innerText, query)
+							if (box[i].innerText == query) {
+								console.log(box[i].offsetTop)
+								box[i].scrollIntoView(true)
+								break;
+							}
+						}
+					}
+				},
+                async sendChat(chatText){
+					let value
+					if(this.useTemplate) {
+						let useTemplateEl = document.getElementById('useTemplate')
+						let text = ""
+						Array.from(useTemplateEl.childNodes).forEach(node => {
+							if (node.nodeType === Node.TEXT_NODE) {
+								// 如果是文本节点
+								text += node.textContent
+							} else if (node.nodeType === Node.ELEMENT_NODE) {
+								// 如果是元素节点
+								if (node.tagName === 'INPUT') {
+									// 如果是input元素
+									text += node.value
+								} else {
+									// 对于其他元素，获取内部文字
+									text += node.innerText
+								}
+							}
+						});
+						value = text
+					} else {
+						value = chatText?chatText:this.chatText
+					}
+					if(this.chatLock){
+						return
+					}
+					let item = { query: value , loading:true, time: new Date().getTime()}
+                    this.chatData.push(item)
+					this.useTemplate = false
+					const d = await (await fetch("http://10.40.241.6:17862/glm/chatdata?q=" + value, { method: 'POST' })).json()
+					//item.response = d.data.choices[0].content
+					item.response = d.choices[0].message.content
+					item.loading = false
+                    this.chatText = null
+					this.$nextTick(function() {
+						document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0].scrollHeight
+					})
+					this.chatLock=false
+				},
+                copydf(e) {
+					const input = document.createElement('textarea') // 创建input对象
+					const link = document.querySelector('.content-df' + e) // 获取需要复制文字的容器
+					input.value = link.innerText // 设置复制内容
+					document.body.appendChild(input) // 添加临时实例
+					input.select() // 选择实例内容
+					document.execCommand('Copy') // 执行复制
+					document.body.removeChild(input) // 删除临时实例
+					this.$message({
+						message: '复制成功',
+						type: 'success'
+					});
+				},
+				copyTemplate(text) {
+					this.useTemplate = false
+					this.chatText = text
+					// this.$nextTick(() => {
+					// 	const useTemplateEl = document.getElementById('useTemplate')
+					// 	useTemplateEl.innerHTML = ''
+					// 	let arrayText = text.split(/\[([^\]]*)\]/g);
+					// 	let result = [];
+					// 	for(let i=0; i<arrayText.length; i++){
+					// 		if(arrayText[i] !== ""){
+					// 			result.push(arrayText[i]);
+					// 		}
+					// 	}
+					// 	console.log(result, arrayText);
+					// 	if(text.indexOf("[") === 0) {
+					// 		result.forEach((item, i) => {
+					// 			const index = i + 1
+					// 			if(index%2 === 0) {
+					// 				const span = document.createElement('span')
+					// 				span.setAttribute('style', 'display: inline-block;')
+					// 				span.innerText = item;
+					// 				useTemplateEl.appendChild(span)
+					// 			} else {
+					// 				const input = document.createElement('input') // 创建input对象
+					// 				// 设置input的属性
+					// 				input.setAttribute('class', 'can-edit')
+					// 				input.value = item
+					// 				input.style.width = (input.value.length * 16 + 10) + 'px'
+					// 				useTemplateEl.appendChild(input)
+					// 			}
+					// 		})
+					// 	} else if(text.indexOf("[") > 0) {
+					// 		result.forEach((item, i) => {
+					// 			const index = i + 1
+					// 			if(index%2 === 0) {
+					// 				const input = document.createElement('input') // 创建input对象
+					// 				// 设置input的属性
+					// 				input.setAttribute('class', 'can-edit')
+					// 				input.value = item
+					// 				input.style.width = (input.value.length * 16 + 10) + 'px'
+					// 				useTemplateEl.appendChild(input)
+					// 			} else {
+					// 				const span = document.createElement('span')
+					// 				span.setAttribute('style', 'display: inline-block;')
+					// 				span.innerText = item;
+					// 				useTemplateEl.appendChild(span)
+					// 			}
+					// 		})
+					// 	}
+					// })
+					
+				}
+            }
+        })
+    </script>
+</html>
