@@ -897,6 +897,42 @@ header {
     text-overflow: clip;
   }
 }
+/* 个人知识库上传文件部分 */
+.baseBox {
+  margin: 20px auto;
+  background: #FFFFFF;
+  width: 100%;
+  min-height: calc(75vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.baseBox .el-upload-dragger {
+  width: 606px;
+  height: 278px;
+  background: #FEFFFF;
+  border: 1px dashed #AFAFAF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.baseBox .el-upload__tip {
+  font-size: 16px;
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+.baseBox .el-upload-dragger .el-upload__text {
+  font-size: 18px;
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.6);
+}
+
 /* 底部内容 */
 footer {
   height: 80px;

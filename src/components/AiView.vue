@@ -51,7 +51,7 @@
                   智能问数用户<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item icon="el-icon-reading">个人知识库</el-dropdown-item>
+                  <el-dropdown-item @click.native="tabSelectedChange(4)" icon="el-icon-reading">个人知识库</el-dropdown-item>
                   <el-dropdown-item icon="el-icon-close">退出</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -78,7 +78,11 @@
     <template v-if="tabSelected == 0">
       <dataQA />
     </template>
-    <footer v-if="tabSelected === 0">
+    <!-- 个人知识库部分 -->
+    <template v-if="tabSelected == 4">
+      <KnowledgeBase></KnowledgeBase>
+    </template>
+    <footer v-if="tabSelected === 0 || tabSelected === 4">
       <p>业务指导单位：
         <!--span style="margin-right: 36px;">科学技术与信息化司</span-->
         <span>发展规划司</span>
@@ -113,6 +117,7 @@
   import writ from './component/writ.vue'
   import referenceQA from "./component/referenceQA.vue";
   import ReferenceQaDrawer from "./component/ReferenceQaDrawer.vue";
+  import KnowledgeBase from '../components/component/knowledgeBase.vue';
 
   export default {
     name: '',
@@ -129,7 +134,8 @@
       proofread,
       dataQA,
       writ,
-      referenceQA
+      referenceQA,
+      KnowledgeBase
     },
     watch: {
       tabSelected(val) {
@@ -143,13 +149,14 @@
         },
       // 点击顶部tab
       tabSelectedChange(val) {
+        console.log(val)
         if (this.tabSelected === val) {
           var iframe = document.getElementById('iframe'); // 获取iframe元素，'iframeId'是你的iframe的id
           this.searchUrl = 'https://officechat.emic.edu.cn/new-official/#/policyinquiry'
           // iframe.src = iframe.src 控制台报错删除
         } else {
           this.tabSelected = val
-        }
+        } 
       },
       dialogBeforeClose() {
         this.dialogVisible = false
