@@ -58,11 +58,10 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-            <el-form-item>
-                <el-button type="primary" @click="updateDialog">上传文件</el-button>
-                <el-button>取消</el-button>
-              </el-form-item>
             <el-col :span="12">
+              <el-form-item>
+                <el-button type="primary" @click="updateDialog">上传文件</el-button>
+              </el-form-item>
             </el-col>
           </el-row>
         </el-form>
