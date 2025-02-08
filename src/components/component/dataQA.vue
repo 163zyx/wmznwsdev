@@ -187,13 +187,11 @@
         <el-input v-else v-model="chatText" type="text" placeholder="请输入问题相关描述" @keydown.enter="sendChat()">
           <el-select class="select_url" v-model="selectUrl" slot="prepend" placeholder="请选择">
             <el-option label="年鉴数据" :value="getApiUrl('/glm/v2/chatdata?v=4&t=nj&q=')"></el-option>
-            <el-option label="知识库数据" value=""></el-option>
             <!-- el-option label="业务数据" value="http://10.40.241.6:17862/glm/v2/chatdata?v=4&t=jck&q="></el-option>
             <el-option label="经济人口" value="http://10.40.241.6:17862/glm/v2/chatdata?v=4&t=jr&q="></el-option>
             <el-option label="Auto" value="http://10.40.241.6:17862/glm/v3/chat?q="></el-option-->
           </el-select>
         </el-input>
-        <el-button icon="el-icon-plus" v-if="!selectUrl" circle style="margin-left: 5px;" @click="openUpdate"></el-button>
         <el-button :disabled="chatLock" @click="sendChat()">发送</el-button>
       </div>
 
@@ -1067,9 +1065,6 @@ export default {
           this.useTemplate = false
           this.chatText = item.content
         }
-      },
-      openUpdate() {
-
       },
     }
   }

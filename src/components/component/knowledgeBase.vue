@@ -22,34 +22,36 @@
               <el-radio-button label="all">全部</el-radio-button>
               <el-radio-button label="word">Word文件</el-radio-button>
               <el-radio-button label="txt">txt文件</el-radio-button>
+              <el-radio-button label="pdf">PDF文件</el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="审校状态：">
+              <el-form-item label="文件状态：">
                 <el-radio-group v-model="form.checkType">
                   <el-radio-button label="all">全部</el-radio-button>
-                  <el-radio-button label="review">审校中</el-radio-button>
-                  <el-radio-button label="complete">审校完成</el-radio-button>
-                  <el-radio-button label="fail">审校失败</el-radio-button>
+                  <el-radio-button label="complete">上传成功</el-radio-button>
+                  <el-radio-button label="fail">上传失败</el-radio-button>
+                  <el-radio-button label="loading">向量化中</el-radio-button>
+                  <el-radio-button label="noerror">向量化完成</el-radio-button>
                 </el-radio-group>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item label="审校结果：">
+            <!-- <el-col :span="12">
+              <el-form-item label="文件状态：">
                 <el-radio-group v-model="form.checkResult">
                   <el-radio-button label="all">全部</el-radio-button>
-                  <el-radio-button label="haserror">无错误</el-radio-button>
-                  <el-radio-button label="noerror">有错误</el-radio-button>
+                  <el-radio-button label="loading">向量化中</el-radio-button>
+                  <el-radio-button label="noerror">向量化完成</el-radio-button>
                 </el-radio-group>
               </el-form-item>
-            </el-col>
+            </el-col> -->
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="审校时间：">
+              <el-form-item label="上传时间：">
                   <el-date-picker
-                  v-model="form.date1"
+                  v-model="form.uploadDate"
                   type="daterange"
                   range-separator="-"
                   value-format="yyyy-MM-dd"
@@ -60,7 +62,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item>
-                <el-button type="primary" @click="updateDialog">上传文件</el-button>
+                <el-button type="primary" @click="uploadShow">上传文件</el-button>
               </el-form-item>
             </el-col>
           </el-row>
@@ -112,23 +114,6 @@
           </el-pagination>
         </template>
       </div>
-      <el-dialog
-        title="上传文件"
-        :visible.sync="uploadVisible"
-        width="60%"
-        :before-close="handleClose">
-        <div class="baseBox bin" v-loading="loading">
-          <el-upload class="upload-demo" drag accept=".doc, .docx, .txt" :http-request="uploadBpmn"
-            :before-upload="beforeUpload" action="#" :show-file-list="false">
-            <div class="el-upload__text"><em style="color: #0052D9;">点击上传</em> / 将文件拖入此区域</div>
-            <div class="el-upload__tip" slot="tip">文件支持docx、doc、txt，大小不得超过50M</div>
-          </el-upload>
-      </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="uploadVisible = false">取 消</el-button>
-          <el-button type="primary" @click="uploadVisible = false">确 定</el-button>
-        </span>
-      </el-dialog>
     </div>
   </div>
 </template>
@@ -144,7 +129,7 @@ export default {
           docType: 'all',
           checkType: 'all',
           checkResult: 'all',
-          date1: '',
+          uploadDate: '',
         },
         baseDataList: [{
           date: '2016-05-02',
@@ -181,8 +166,6 @@ export default {
           address: '上海市普陀区金沙江路 1516 弄'
         }],
         currentPage: 1,
-        uploadVisible: false,
-        loading: false,
       }
     },
     computed: {
@@ -202,10 +185,6 @@ export default {
     },
     methods: {
       getApiUrl,
-      updateDialog(){
-        this.uploadVisible = true
-        console.log(this.form)
-      },
       handleEdit(index, row) {
         console.log(index, row);
       },
@@ -221,93 +200,8 @@ export default {
       goBack() {
         this.$parent.tabSelectedChange(0);
       },
-      handleClose(done) {
-        this.$confirm('确认关闭？')
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
-      },
-      beforeUpload(file) { // 上传文件之前钩子
-        if (file.size > 1024 * 1024 * 50) {
-          this.$message({
-            type: 'error',
-            message: '文件大小不得超过50M！'
-          })
-          return false
-        }
-      },
-      uploadBpmn(param) { // 部署流程定义（点击按钮，上传文件，上传成功后部署，然后重新加载列表）
-        var that = this
-        that.loading = true
-        const formData = new FormData()
-        console.log(param)
-        formData.append('file', param.file) // 传入文件
-        that.loading = false
-        // let url = "http://10.0.10.187:8081/smiling/knowledge/file/upload"
-        // https://officechat.emic.edu.cn 正式
-        // http://39.106.131.95:9002 测试
-        fetch('http://10.0.10.187:8081/smiling/knowledge/file/upload', {
-          // fetch('http://39.106.131.95:9002/education/verify', {
-          method: 'POST',
-          body:formData,
-          headers: {
-              'X-User-ID': '1111111',
-          },
-        }).then(function (data) {
-          that.loading = false
-          return data.text()
-        }).then(function (data) {
-          that.loading = false
-          var res = JSON.parse(data)
-          if (res.code === 1001) {
-            console.log(res)
-            that.fileInfo = res.data
-            that.gztsList = that.fileInfo.tipResult
-            that.yscwList = that.fileInfo.wordResult
-            if (that.gztsList && that.gztsList.length) {
-              that.$nextTick(() => {
-                that.gztsAddStyle()
-              })
-            }
-            if (that.yscwList && that.yscwList.length) {
-              that.$nextTick(() => {
-                that.yscwAddStyle()
-              })
-            }
-            if (that.fileInfo.wordViolateTypeList && that.fileInfo.wordViolateTypeList
-              .length) {
-              that.yscwOption = [{
-                value: '全部',
-                label: '全部提示（' + that.fileInfo.wordResult.length + '）',
-              }]
-              that.fileInfo.wordViolateTypeList.map(item => {
-                that.yscwOption.push({
-                  value: item,
-                  label: item,
-                })
-              })
-              that.yscwValue = that.yscwOption[0].value
-            }
-            if (that.fileInfo.tipViolateTypeList && that.fileInfo.tipViolateTypeList.length) {
-              that.gztsOption = [{
-                value: '全部',
-                label: '全部提示（' + that.fileInfo.tipResult.length + '）',
-              }]
-              that.fileInfo.tipViolateTypeList.map(item => {
-                that.gztsOption.push({
-                  value: item,
-                  label: item,
-                })
-              })
-              that.gztsValue = that.gztsOption[0].value
-            }
-          } else {
-            that.$message.error(res.msg);
-          }
-        }).catch(err => {
-          that.$message.error(err);
-        })
+      uploadShow() {
+        this.$parent.updateDialog();
       },
     }
   }

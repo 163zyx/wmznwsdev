@@ -26,10 +26,18 @@
               <img v-else src="./img/edu.jpg" alt="" />
               问数
             </li>
+            <li :class="tabSelected == 5 ? 'active' : ''" @click="tabSelectedChange(5)" style="position: relative;">
+                <!-- <div class="fire-tips">deepseek</div> -->
+                <el-badge value="deepseek" class="fire" type="primary">
+                  <img v-if="tabSelected == 5" src="./img/edu-active.jpg" alt="" />
+                  <img v-else src="./img/edu.jpg" alt="" />
+                  写作
+                </el-badge>
+            </li>
             <li :class="tabSelected == 1 ? 'active' : ''" @click="tabSelectedChange(1)">
               <img v-if="tabSelected == 1" src="./img/ss.png" alt="" />
               <img v-else src="./img/wxz-ss.png" alt="" />
-              搜索
+              问政
             </li>
             <!-- <li :class="tabSelected == 2 ? 'active' : ''" @click="tabSelectedChange(2)">
 								<img v-if="tabSelected == 2" src="./img/xiezuo-active.png" alt="" />
@@ -56,7 +64,7 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
-          </div>
+        </div>
       </div>
     </header>
 
@@ -82,7 +90,11 @@
     <template v-if="tabSelected == 4">
       <KnowledgeBase></KnowledgeBase>
     </template>
-    <footer v-if="tabSelected === 0 || tabSelected === 4">
+    <!-- 知识库问答部分 -->
+    <template v-if="tabSelected == 5">
+      <KnowledgeQA />
+    </template>
+    <footer v-if="tabSelected === 0 || tabSelected === 4 || tabSelected === 5">
       <p>业务指导单位：
         <!--span style="margin-right: 36px;">科学技术与信息化司</span-->
         <span>发展规划司</span>
@@ -107,6 +119,23 @@
 
         </div>
     </el-dialog>
+    <el-dialog
+        title="上传文件"
+        :visible.sync="uploadVisible"
+        width="60%"
+        :before-close="handleClose">
+        <div class="baseBox bin" v-loading="loading">
+          <el-upload class="upload-demo" drag accept=".doc, .docx, .txt" :http-request="uploadBpmn"
+            :before-upload="beforeUpload" action="#" :show-file-list="false">
+            <div class="el-upload__text"><em style="color: #0052D9;">点击上传</em> / 将文件拖入此区域</div>
+            <div class="el-upload__tip" slot="tip">文件支持docx、doc、txt，大小不得超过50M<br>免责声明：用户上传文件需自担风险，与本平台无关。请确保非涉密且合法。</div>
+          </el-upload>
+      </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="uploadVisible = false">取 消</el-button>
+          <el-button type="primary" @click="uploadVisible = false">确 定</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -117,6 +146,7 @@
   import referenceQA from "./component/referenceQA.vue";
   import ReferenceQaDrawer from "./component/ReferenceQaDrawer.vue";
   import KnowledgeBase from '../components/component/knowledgeBase.vue';
+  import KnowledgeQA from '../components/component/knowledgeQA.vue';
 
   export default {
     name: '',
@@ -125,7 +155,9 @@
         loading: false,
         tabSelected: 0,
         dialogVisible: false,
-        searchUrl: 'https://officechat.emic.edu.cn/new-official/#/policyinquiry'
+        searchUrl: 'https://officechat.emic.edu.cn/new-official/#/policyinquiry',
+        uploadVisible: false,
+        loading: false,
       }
     },
     components: {
@@ -134,7 +166,8 @@
       dataQA,
       writ,
       referenceQA,
-      KnowledgeBase
+      KnowledgeBase,
+      KnowledgeQA,
     },
     watch: {
       tabSelected(val) {
@@ -142,10 +175,10 @@
       }
     },
     methods: {
-        handleGoSearch(url){
-            this.searchUrl = url
-            this.tabSelected = 1
-        },
+      handleGoSearch(url){
+          this.searchUrl = url
+          this.tabSelected = 1
+      },
       // 点击顶部tab
       tabSelectedChange(val) {
         console.log(val)
@@ -160,7 +193,59 @@
       dialogBeforeClose() {
         this.dialogVisible = false
       },
-
+      beforeUpload(file) { // 上传文件之前钩子
+        if (file.size > 1024 * 1024 * 50) {
+          this.$message({
+            type: 'error',
+            message: '文件大小不得超过50M！'
+          })
+          return false
+        }
+      },
+      uploadBpmn(param) { // 部署流程定义（点击按钮，上传文件，上传成功后部署，然后重新加载列表）
+        var that = this
+        that.loading = true
+        const formData = new FormData()
+        formData.append('file', param.file) // 传入文件
+        console.log("formdata1", formData)
+        that.loading = false
+        // let url = "http://10.0.10.187:8081/smiling/knowledge/file/upload"
+        // https://officechat.emic.edu.cn 正式
+        // http://39.106.131.95:9002 测试
+        fetch('http://10.0.10.187:8081/smiling/knowledge/file/upload', {
+          // fetch('http://39.106.131.95:9002/education/verify', {
+          method: 'POST',
+          body:formData,
+          headers: {
+              'X-User-ID': '1111111',
+          },
+        }).then(function (data) {
+          return data.text();
+        }).then(function (data) {
+          that.loading = false;
+          that.uploadVisible = false;
+          console.log("formdata2", formData)
+          var res = JSON.parse(data)
+          if (res.status === 1000) {
+            that.$message.success(res.message);
+          } else {
+            that.$message.error(res.message);
+          }
+        }).catch(err => {
+          that.$message.error(err);
+        })
+      },
+      updateDialog(){
+        this.uploadVisible = true
+        // console.log(this.form)
+      },
+      handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
     }
   }
 

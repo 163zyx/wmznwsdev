@@ -932,7 +932,24 @@ header {
   font-weight: 400;
   color: rgba(0, 0, 0, 0.6);
 }
-
+/* .fire-tips {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  color: #FFFFFF;
+  background: url('../img/bulefire.png') no-repeat;
+  background-size: 100% 100%;
+  line-height: 60px;
+  font-size: 12px;
+  text-align: center;
+  top: 0px;
+  right: -50px;
+} */
+.fire {
+  .el-badge__content.is-fixed {
+    top: 20px;
+  }
+}
 /* 底部内容 */
 footer {
   height: 80px;
