@@ -742,7 +742,7 @@ header {
 
 .xz-right-foot input {
   /* width: 642px; */
-  width: 635px;
+  width: 580px;
   height: 44px;
   background: #FFFFFF;
   border-radius: 4px 4px 4px 4px;
@@ -751,8 +751,8 @@ header {
 }
 
 .xz-right-foot button {
-  width: 141px;
-  height: 44px;
+  /* width: 141px;
+  height: 44px; */
   background: #F49922;
   border-radius: 4px 4px 4px 4px;
   opacity: 1;

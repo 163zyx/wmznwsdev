@@ -244,68 +244,70 @@ export default {
         console.log(param)
         formData.append('file', param.file) // 传入文件
         that.loading = false
-        console.log("formdata", this.formData)
-        that.$message.success('上传成功')
+        // let url = "http://10.0.10.187:8081/smiling/knowledge/file/upload"
         // https://officechat.emic.edu.cn 正式
         // http://39.106.131.95:9002 测试
-        // fetch('https://officechat.emic.edu.cn/education/verify', {
-        //   // fetch('http://39.106.131.95:9002/education/verify', {
-        //   method: 'POST',
-        //   body: formData,
-        // }).then(function (data) {
-        //   that.loading = false
-        //   return data.text()
-        // }).then(function (data) {
-        //   that.loading = false
-        //   var res = JSON.parse(data)
-        //   if (res.code === 1001) {
-        //     console.log(res)
-        //     that.fileInfo = res.data
-        //     that.gztsList = that.fileInfo.tipResult
-        //     that.yscwList = that.fileInfo.wordResult
-        //     if (that.gztsList && that.gztsList.length) {
-        //       that.$nextTick(() => {
-        //         that.gztsAddStyle()
-        //       })
-        //     }
-        //     if (that.yscwList && that.yscwList.length) {
-        //       that.$nextTick(() => {
-        //         that.yscwAddStyle()
-        //       })
-        //     }
-        //     if (that.fileInfo.wordViolateTypeList && that.fileInfo.wordViolateTypeList
-        //       .length) {
-        //       that.yscwOption = [{
-        //         value: '全部',
-        //         label: '全部提示（' + that.fileInfo.wordResult.length + '）',
-        //       }]
-        //       that.fileInfo.wordViolateTypeList.map(item => {
-        //         that.yscwOption.push({
-        //           value: item,
-        //           label: item,
-        //         })
-        //       })
-        //       that.yscwValue = that.yscwOption[0].value
-        //     }
-        //     if (that.fileInfo.tipViolateTypeList && that.fileInfo.tipViolateTypeList.length) {
-        //       that.gztsOption = [{
-        //         value: '全部',
-        //         label: '全部提示（' + that.fileInfo.tipResult.length + '）',
-        //       }]
-        //       that.fileInfo.tipViolateTypeList.map(item => {
-        //         that.gztsOption.push({
-        //           value: item,
-        //           label: item,
-        //         })
-        //       })
-        //       that.gztsValue = that.gztsOption[0].value
-        //     }
-        //   } else {
-        //     that.$message.error(res.msg);
-        //   }
-        // }).catch(err => {
-        //   that.$message.error(err);
-        // })
+        fetch('http://10.0.10.187:8081/smiling/knowledge/file/upload', {
+          // fetch('http://39.106.131.95:9002/education/verify', {
+          method: 'POST',
+          body:formData,
+          headers: {
+              'X-User-ID': '1111111',
+          },
+        }).then(function (data) {
+          that.loading = false
+          return data.text()
+        }).then(function (data) {
+          that.loading = false
+          var res = JSON.parse(data)
+          if (res.code === 1001) {
+            console.log(res)
+            that.fileInfo = res.data
+            that.gztsList = that.fileInfo.tipResult
+            that.yscwList = that.fileInfo.wordResult
+            if (that.gztsList && that.gztsList.length) {
+              that.$nextTick(() => {
+                that.gztsAddStyle()
+              })
+            }
+            if (that.yscwList && that.yscwList.length) {
+              that.$nextTick(() => {
+                that.yscwAddStyle()
+              })
+            }
+            if (that.fileInfo.wordViolateTypeList && that.fileInfo.wordViolateTypeList
+              .length) {
+              that.yscwOption = [{
+                value: '全部',
+                label: '全部提示（' + that.fileInfo.wordResult.length + '）',
+              }]
+              that.fileInfo.wordViolateTypeList.map(item => {
+                that.yscwOption.push({
+                  value: item,
+                  label: item,
+                })
+              })
+              that.yscwValue = that.yscwOption[0].value
+            }
+            if (that.fileInfo.tipViolateTypeList && that.fileInfo.tipViolateTypeList.length) {
+              that.gztsOption = [{
+                value: '全部',
+                label: '全部提示（' + that.fileInfo.tipResult.length + '）',
+              }]
+              that.fileInfo.tipViolateTypeList.map(item => {
+                that.gztsOption.push({
+                  value: item,
+                  label: item,
+                })
+              })
+              that.gztsValue = that.gztsOption[0].value
+            }
+          } else {
+            that.$message.error(res.msg);
+          }
+        }).catch(err => {
+          that.$message.error(err);
+        })
       },
     }
   }
