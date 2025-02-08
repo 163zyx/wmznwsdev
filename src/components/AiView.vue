@@ -224,7 +224,6 @@
         }).then(function (data) {
           that.loading = false;
           that.uploadVisible = false;
-          console.log("formdata2", formData)
           var res = JSON.parse(data)
           if (res.status === 1000) {
             that.$message.success(res.message);
