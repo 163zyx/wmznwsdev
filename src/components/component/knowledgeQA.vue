@@ -185,7 +185,7 @@
       <div class="xz-right-foot">
         <el-select class="select_url" v-model="selectUrl" slot="prepend" placeholder="请选择">
           <!-- <el-option label="年鉴数据" :value="getApiUrl('/glm/v2/chatdata?v=4&t=nj&q=')"></el-option> -->
-          <el-option label="知识库数据" value=""></el-option>
+          <el-option label="知识库数据" value="http://10.20.13.207/v1/chat-messages"></el-option>
           <!-- el-option label="业务数据" value="http://10.40.241.6:17862/glm/v2/chatdata?v=4&t=jck&q="></el-option>
           <el-option label="经济人口" value="http://10.40.241.6:17862/glm/v2/chatdata?v=4&t=jr&q="></el-option>
           <el-option label="Auto" value="http://10.40.241.6:17862/glm/v3/chat?q="></el-option-->
@@ -223,7 +223,7 @@ export default {
         // selectUrl: 'https://officechat.emic.edu.cn/glm/v2/chatdata?v=4&t=nj&q=',
         // selectUrl: 'http://47.123.4.81:3389/glm/test?v=4&t=nj&q=',
         // selectUrl: getApiUrl('/glm/v2/chatdata?v=4&t=nj&q='),
-        selectUrl: '',
+        selectUrl: 'http://10.20.13.207/v1/chat-messages',
         dialogVisible: false,
         image: '',
         AIList: [],
@@ -273,12 +273,15 @@ export default {
             return;
           }
           const item = this.chatData[this.chatData.length - 1];
+          console.log("this.chatData[this.chatData.length - 1];",this.chatData[this.chatData.length - 1])
+          console.log("item",this.chatData[this.chatData.length - 1])
           if (val.response) {
             if (!item.responseText) {
               this.renderResponseInx = 0;
             }
             this.renderResponseInterval = setInterval(() => {
               const item = this.chatData[this.chatData.length - 1];
+              console.log('item.response:', item)
               if (this.renderResponseInx >= item.response.length) {
                 clearInterval(this.renderResponseInterval);
                 this.renderResponseInterval = null;
@@ -392,41 +395,60 @@ export default {
         })
       },
       renderSseMessage(sseMessages) {
+        console.log('sseMessages:', sseMessages)
         const d = JSON.parse(JSON.stringify(sseMessages));
-        if (!d.length) return
-
-        if (this.chatData.length > 0) {
-          console.log('---------------chatdata:', this.chatData)
-          let item = this.chatData[this.chatData.length - 1];
-          item.loading = false;
-
-          const latestRes = d[d.length - 1];
-          console.log('---------------dddddd:', latestRes)
-          let resType = '';
-          if (latestRes.hasOwnProperty('message')) {
-            resType = 'text'
-            item.response = latestRes.message.content.text;
-            item.response_status = latestRes.status;
-            // 会在watch-latestChatResponse里面渲染text，并执行afterChatSuccess
-            if (latestRes.status === 'finish') {
-              // 手动结束sse
-              this.closeSSE();
-            }
-          } else {
-            resType = 'echarts'
-            item.response = '';
-            item.loadings = false;
-          }
-          this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
-          this.chatData = JSON.parse(JSON.stringify(this.chatData));
-          if (resType === 'echarts') {
-            // 手动结束sse
-            this.closeSSE();
-            // 渲染表格
-            this.renderEcharts(item, latestRes);
-            this.afterChatSuccess(item, latestRes);
+        let result = ''
+        for (let i = 0; i < sseMessages.length; i++) {
+          if (sseMessages[i].event === 'message') {
+            result += sseMessages[i].answer
           }
         }
+        let item = this.chatData[this.chatData.length - 1];
+        item.response = result;
+        // item.response_status = 'loading';
+        console.log("item", item)
+        // this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
+        // this.chatData = JSON.parse(JSON.stringify(this.chatData));
+        // console.log("Txtresult", result)
+        // console.log("d", d)
+        // if (!d.length) return
+
+        // if (this.chatData.length > 0) {
+        //   console.log('this.chatData', this.chatData)
+        //   let item = this.chatData[this.chatData.length - 1];
+        //   item.loading = false;
+        //   const latestRes = d[d.length - 1];
+        //   console.log('latestRes', latestRes)
+        //   let resType = '';
+        //   if (latestRes.event === 'message') {
+        //     resType = 'text'
+        //     item.response = result;
+        //     item.response_status = 'loading';
+        //     console.log("Txtresult", result)
+        //     // 会在watch-latestChatResponse里面渲染text，并执行afterChatSuccess
+        //     // if (latestRes.status === 'finish') {
+        //     //   // 手动结束sse
+        //     //   this.closeSSE();
+        //     // }
+        //   } else {
+        //     // if (latestRes.event === 'message_end') {
+        //     //   // 手动结束sse
+        //     //   this.closeSSE();
+        //     // }
+        //     // resType = 'echarts'
+        //     // item.response = '';
+        //     // item.loadings = false;
+        //   }
+        //   this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
+        //   this.chatData = JSON.parse(JSON.stringify(this.chatData));
+        //   // if (resType === 'echarts') {
+        //   //   // 手动结束sse
+        //   //   this.closeSSE();
+        //   //   // 渲染表格
+        //   //   this.renderEcharts(item, latestRes);
+        //   //   this.afterChatSuccess(item, latestRes);
+        //   // }
+        // }
       },
       async afterChatSuccess(item, d) {
         try {
@@ -683,7 +705,13 @@ export default {
         try {
           // sse请求
           this.chatLock = true;
-          this.initSSE(this.selectUrl + value);
+          this.initSSE(this.selectUrl,{
+            'query': value,
+            'user': '1122332',
+            "inputs": {},
+            "response_mode": "streaming",
+            "conversation_id": "",
+          });
 
           /*// 如果需要进行超时就在调用这个方法，fetchWithTimeout
           d = await this.fetchWithTimeout(this.selectUrl + value, {

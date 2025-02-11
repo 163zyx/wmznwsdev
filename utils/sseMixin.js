@@ -10,23 +10,36 @@ export default {
     };
   },
   methods: {
-    initSSE(url, data = null) {
+    initSSE(url, data) {
       this.sseMessages = [];
       this.sseError = '';
       if (data) {
+        console.log("data", data)
         this.eventSource = new SSE(url, {
           payload: JSON.stringify(data),
           debug: true,
+          headers: {
+            'Authorization': 'Bearer app-MZtc1HrKa4mPEYPJh1JaJHDB', // 替换为实际的授权令牌
+            'Content-Type': 'application/json',
+          }
         });
       } else {
-        this.eventSource = new SSE(url, {debug: true});
+        this.eventSource = new SSE(url, {
+          debug: true,
+          headers: {
+            'Authorization': 'Bearer app-MZtc1HrKa4mPEYPJh1JaJHDB', // 替换为实际的授权令牌,
+            'Content-Type': 'application/json',
+          }
+        });
       }
 
       this.eventSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log('---------------onmessage:', data)
+          // console.log('---------------onmessage:', data)
           if (data) this.sseMessages.push(data);
+            // console.log("data.answers",data.answer)
+          // if (data) this.sseMessages.push(data);
         } catch (e) {
           // ignore
         }

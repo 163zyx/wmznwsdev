@@ -203,6 +203,7 @@
 </template>
 <script>
 import * as echarts from 'echarts';
+import Cookies from 'vue-cookies';
 import ecStat from 'echarts-stat';
 import MarkdownIt from 'markdown-it';
 import sseMixin from "../../../utils/sseMixin";
@@ -218,6 +219,7 @@ export default {
         useTemplate: false,
         shenjiaopj: '',
         // selectUrl: 'https://officechat.emic.edu.cn/glm/v2/chatdata?v=4&t=nj&q=',
+        // selectUrl: 'https://map.data.moe.edu.cn/rest/glm/chatdata?t=nj&q=',
         // selectUrl: 'http://47.123.4.81:3389/glm/test?v=4&t=nj&q=',
         selectUrl: getApiUrl('/glm/v2/chatdata?v=4&t=nj&q='),
         dialogVisible: false,
@@ -388,7 +390,9 @@ export default {
         })
       },
       renderSseMessage(sseMessages) {
+        console.log('sseMessages:', sseMessages)
         const d = JSON.parse(JSON.stringify(sseMessages));
+        console.log("d", d)
         if (!d.length) return
 
         if (this.chatData.length > 0) {
@@ -648,6 +652,27 @@ export default {
         if (this.chatLock) {
           return
         }
+        
+        // fetch('https://map.data.moe.edu.cn/rest/glm/chatdata?t=nj&q='+ this.chatText, {
+        //   // fetch('http://39.106.131.95:9002/education/verify', {
+        //   method: 'POST',
+        //   headers: {
+        //     'topsession': Cookies.get('topsession')
+        //   },
+        // }).then(function (data) {
+        //   return data.text();
+        // }).then(function (data) {
+        //   var res = JSON.parse(data)
+        //   console.log("res", res)
+        //   // if (res.status === 1000) {
+        //   //   that.$message.success(res.message);
+        //   // } else {
+        //   //   that.$message.error(res.message);
+        //   // }
+        // }).catch(err => {
+        //   that.$message.error(err);
+        // });
+
         let item = {
           query: value,
           loading: true,
