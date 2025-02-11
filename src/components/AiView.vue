@@ -60,7 +60,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item @click.native="tabSelectedChange(4)" icon="el-icon-reading">个人知识库</el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-close">退出</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-close" @click.native="exit">退出</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
@@ -188,7 +188,7 @@
       getTopSession() {
         let self = this
         // let url = window.location.href
-        let url = 'https://officechat.emic.edu.cn/analyse/#/?token=8f6a933fe10669ba4085351dc5cbf75f';
+        let url = 'https://officechat.emic.edu.cn/analyse/#/?token=b1d0833b5f6f9dad2fc5d2595468a70a';
         // console.log("url", url.split('=')[1]);
         let token = url.split('=')[1];
         fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {
@@ -297,6 +297,14 @@
         this.$confirm('确认关闭？')
           .then(_ => {
             done();
+          })
+          .catch(_ => {});
+      },
+      exit() {
+        this.$confirm('确认退出？')
+          .then(_ => {
+            Cookies.remove('topsession'); // 删除cookie
+            window.location.href = 'https://user.moe.edu.cn/www/uc/cas/logout?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice%3Dhttps%253A%252F%252Fmap.data.moe.edu.cn%252Fchat%252F'
           })
           .catch(_ => {});
       },
