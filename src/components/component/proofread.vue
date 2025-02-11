@@ -6,7 +6,7 @@
         <el-upload class="upload-demo" drag accept=".doc, .docx, .txt" :http-request="uploadBpmn"
           :before-upload="beforeUpload" action="#" :show-file-list="false">
           <div class="el-upload__text"><em style="color: #0052D9;">点击上传</em> / 将文件拖入此区域</div>
-          <div class="el-upload__tip" slot="tip">文件支持docx、doc、txt，大小不得超过9M</div>
+          <div class="el-upload__tip" slot="tip">文件支持docx、doc、txt，大小不得超过9M<br>免责声明：审校功能使用的为外部网络接口，请勿上传涉密文件。</div>
         </el-upload>
       </div>
     </template>

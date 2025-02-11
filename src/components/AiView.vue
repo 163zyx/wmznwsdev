@@ -27,12 +27,12 @@
               问数
             </li>
             <li :class="tabSelected == 5 ? 'active' : ''" @click="tabSelectedChange(5)" style="position: relative;">
-                <!-- <div class="fire-tips">deepseek</div> -->
-                <el-badge value="deepseek" class="fire" type="primary">
+                <div class="fire-tips"></div>
+                <!-- <el-badge value="deepseek" class="fire" type="primary"> -->
                   <img v-if="tabSelected == 5" src="./img/edu-active.jpg" alt="" />
                   <img v-else src="./img/edu.jpg" alt="" />
                   写作
-                </el-badge>
+                <!-- </el-badge> -->
             </li>
             <li :class="tabSelected == 1 ? 'active' : ''" @click="tabSelectedChange(1)">
               <img v-if="tabSelected == 1" src="./img/ss.png" alt="" />
@@ -88,7 +88,7 @@
     </template>
     <!-- 个人知识库部分 -->
     <template v-if="tabSelected == 4">
-      <KnowledgeBase></KnowledgeBase>
+      <KnowledgeBase ref="baseRef"></KnowledgeBase>
     </template>
     <!-- 知识库问答部分 -->
     <template v-if="tabSelected == 5">
@@ -124,7 +124,7 @@
         :visible.sync="uploadVisible"
         width="60%"
         :before-close="handleClose">
-        <div class="baseBox bin" v-loading="loading">
+        <div class="baseBox bin" v-loading="uploading">
           <el-upload class="upload-demo" drag accept=".doc, .docx, .txt" :http-request="uploadBpmn"
             :before-upload="beforeUpload" action="#" :show-file-list="false">
             <div class="el-upload__text"><em style="color: #0052D9;">点击上传</em> / 将文件拖入此区域</div>
@@ -140,6 +140,7 @@
 </template>
 
 <script>
+  import Cookies from 'vue-cookies';
   import proofread from './component/proofread.vue';
   import dataQA from './component/dataQA.vue';
   import writ from './component/writ.vue'
@@ -152,12 +153,13 @@
     name: '',
     data() {
       return {
-        loading: false,
         tabSelected: 0,
         dialogVisible: false,
         searchUrl: 'https://officechat.emic.edu.cn/new-official/#/policyinquiry',
         uploadVisible: false,
         loading: false,
+        uploading: false,
+        token: null,
       }
     },
     components: {
@@ -169,12 +171,65 @@
       KnowledgeBase,
       KnowledgeQA,
     },
+    mounted(){
+      // 从网页地址中判断是否有token，如果有则直接跳转到个人知识库
+      this.getTopSession()
+      // if (url.indexOf('token') === -1) {
+      //   // 往地址跳转
+      //   window.location.href = 'https://user.moe.edu.cn/www/public/home/login?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice%3Dhttps%253A%252F%252Fmap.data.moe.edu.cn%252Fchat%252F'
+      // }
+    },
     watch: {
       tabSelected(val) {
         this.loading = false
       }
     },
     methods: {
+      getTopSession() {
+        let self = this
+        // let url = window.location.href
+        let url = 'https://officechat.emic.edu.cn/analyse/#/?token=8f6a933fe10669ba4085351dc5cbf75f';
+        // console.log("url", url.split('=')[1]);
+        let token = url.split('=')[1];
+        fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {
+          method: 'GET',
+        }).then(function (data) {
+          return data.text()
+        }).then(function (data) {
+          let res = JSON.parse(data)
+          console.log("res",res)
+          if(res.status === 'success') {
+            let result = res.result
+            self.token = result.token
+            Cookies.set('topsession', decodeURIComponent(result.token));
+          } else {
+            if(Cookies.get('topsession')){
+              self.token = Cookies.get('topsession')
+              self.textGet()
+            } else {
+              window.location.href ='https://user.moe.edu.cn/www/uc/cas/logout?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice%3Dhttps%253A%252F%252Fmap.data.moe.edu.cn%252Fchat%252F'
+            }
+          }
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+      textGet() {
+        let self = this
+        fetch(`https://map.data.moe.edu.cn/page`, {
+          method: 'GET',
+          headers: {
+            'topsession': self.token,
+          },
+        }).then(function (data) {
+          return data.text()
+        }).then(function (data) {
+          let res = JSON.parse(data)
+          console.log("datares",res)
+        }).catch(err => {
+          console.log(err)
+        })
+      },
       handleGoSearch(url){
           this.searchUrl = url
           this.tabSelected = 1
@@ -204,11 +259,10 @@
       },
       uploadBpmn(param) { // 部署流程定义（点击按钮，上传文件，上传成功后部署，然后重新加载列表）
         var that = this
-        that.loading = true
+        that.uploading = true
         const formData = new FormData()
         formData.append('file', param.file) // 传入文件
         console.log("formdata1", formData)
-        that.loading = false
         // let url = "http://10.0.10.187:8081/smiling/knowledge/file/upload"
         // https://officechat.emic.edu.cn 正式
         // http://39.106.131.95:9002 测试
@@ -217,19 +271,20 @@
           method: 'POST',
           body:formData,
           headers: {
-              'X-User-ID': '1111111',
+              'X-User-ID': '1',
           },
         }).then(function (data) {
           return data.text();
         }).then(function (data) {
-          that.loading = false;
-          that.uploadVisible = false;
           var res = JSON.parse(data)
           if (res.status === 1000) {
             that.$message.success(res.message);
           } else {
             that.$message.error(res.message);
           }
+          that.loading = false;
+          that.uploadVisible = false;
+          that.$refs.baseRef.getBaseList()
         }).catch(err => {
           that.$message.error(err);
         })

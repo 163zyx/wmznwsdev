@@ -13,7 +13,7 @@
                 <el-input v-model="form.name"></el-input>
               </el-col>
               <el-col :span="8">
-                <el-button>搜索</el-button>
+                <el-button @click="getBaseList">搜索</el-button>
               </el-col>
             </el-row>
           </el-form-item>
@@ -77,24 +77,35 @@
             max-height="330"
             >
             <el-table-column
-              prop="date"
-              label="日期"
-              width="180">
+              prop="id"
+              label="编号"
+              width="100">
             </el-table-column>
             <el-table-column
               prop="name"
-              label="姓名"
+              label="文件名"
               width="180">
             </el-table-column>
             <el-table-column
-              prop="address"
-              label="地址">
+              prop="update_time"
+              label="上传时间"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              prop="type"
+              label="文件类型"
+              width="100">
+            </el-table-column>
+            <el-table-column
+              prop="checktype"
+              label="上传状态"
+              width="100">
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
-                  @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                  @click="handleEdit(scope.$index, scope.row)">重新上传</el-button>
                 <el-button
                   size="mini"
                   type="danger"
@@ -110,7 +121,7 @@
             :current-page="currentPage"
             :page-size="10"
             layout="total, prev, pager, next, jumper"
-            :total="400">
+            :total="pageTotal">
           </el-pagination>
         </template>
       </div>
@@ -131,45 +142,12 @@ export default {
           checkResult: 'all',
           uploadDate: '',
         },
-        baseDataList: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }],
+        baseDataList: [],
         currentPage: 1,
+        pageTotal: 0,
       }
     },
     computed: {
-
     },
     watch: {
       sseMessages: {
@@ -181,15 +159,69 @@ export default {
 
     },
     mounted() {
-
+      this.getBaseList();
     },
     methods: {
       getApiUrl,
+      getBaseList() {
+        let self = this;
+        let param = {
+          'page': self.currentPage,
+          'size': 10,
+        }
+        fetch('http://10.0.10.187:8081/smiling/knowledge/file/list', {
+          // fetch('http://39.106.131.95:9002/education/verify', {
+          method: 'GET',
+          query: param,
+          headers: {
+            'X-User-ID': '1',
+          },
+        }).then(function (data) {
+          return data.text();
+        }).then(function (data) {
+          var res = JSON.parse(data)
+          if (res.status === 1000) {
+            self.$message.success('查询成功');
+            self.baseDataList =  res.data.records.map(record => {
+              record.checktype = record.status === 'SUCCESS' ? '√' : 'X';
+              return record;
+            });
+            self.pageTotal = res.data.total;
+            
+          } else {
+            self.$message.error(res.message);
+          }
+          // if (res.status === 1000) {
+          //   that.$message.success(res.message);
+          // } else {
+          //   that.$message.error(res.message);
+          // }
+        }).catch(err => {
+          self.$message.error(err);
+        })
+      },
       handleEdit(index, row) {
         console.log(index, row);
       },
       handleDelete(index, row) {
         console.log(index, row);
+        let self = this
+        let url = `http://10.0.10.187:8081/smiling/knowledge/file/delete/${row.id}`;
+        fetch(url, {
+          method: 'DELETE',
+        }).then(function (data) {
+          return data.text();
+        }).then(function (data) {
+          var res = JSON.parse(data)
+          if (res.status === 1000) {
+            self.$message.success('删除成功');
+            self.getBaseList();
+          } else {
+            self.$message.error(res.message);
+          }
+        }).catch(err => {
+          self.$message.error(err);
+        })
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
