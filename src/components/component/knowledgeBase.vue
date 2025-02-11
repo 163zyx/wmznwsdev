@@ -26,7 +26,7 @@
             </el-radio-group>
           </el-form-item>
           <el-row>
-            <el-col :span="12">
+            <!-- <el-col :span="12">
               <el-form-item label="文件状态：">
                 <el-radio-group v-model="form.checkType">
                   <el-radio-button label="all">全部</el-radio-button>
@@ -36,7 +36,7 @@
                   <el-radio-button label="noerror">向量化完成</el-radio-button>
                 </el-radio-group>
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <!-- <el-col :span="12">
               <el-form-item label="文件状态：">
                 <el-radio-group v-model="form.checkResult">
@@ -105,7 +105,7 @@
               <template slot-scope="scope">
                 <el-button
                   size="mini"
-                  @click="handleEdit(scope.$index, scope.row)">重新上传</el-button>
+                  @click="uploadShow">重新上传</el-button>
                 <el-button
                   size="mini"
                   type="danger"
@@ -204,7 +204,6 @@ export default {
         console.log(index, row);
       },
       handleDelete(index, row) {
-        console.log(index, row);
         let self = this
         let url = `http://10.0.10.187:8081/smiling/knowledge/file/delete/${row.id}`;
         fetch(url, {
