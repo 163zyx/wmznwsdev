@@ -105,7 +105,8 @@
               <template slot-scope="scope">
                 <el-button
                   size="mini"
-                  @click="uploadShow">重新上传</el-button>
+                  @click="uploadShow"
+                  v-if="scope.row.status!== 'SUCCESS'">重新上传</el-button>
                 <el-button
                   size="mini"
                   type="danger"

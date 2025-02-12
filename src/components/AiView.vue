@@ -125,10 +125,10 @@
         width="60%"
         :before-close="handleClose">
         <div class="baseBox bin" v-loading="uploading">
-          <el-upload class="upload-demo" drag accept=".doc, .docx, .txt" :http-request="uploadBpmn"
+          <el-upload class="upload-demo" drag accept=".docx, .txt, .pdf, .csv" :http-request="uploadBpmn"
             :before-upload="beforeUpload" action="#" :show-file-list="false">
             <div class="el-upload__text"><em style="color: #0052D9;">点击上传</em> / 将文件拖入此区域</div>
-            <div class="el-upload__tip" slot="tip">文件支持docx、doc、txt，大小不得超过50M<br>免责声明：用户上传文件需自担风险，与本平台无关。请确保非涉密且合法。</div>
+            <div class="el-upload__tip" slot="tip">文件支持docx、pdf、 csv, txt，大小不得超过50M<br>免责声明：用户上传文件需自担风险，与本平台无关。请确保非涉密且合法。</div>
           </el-upload>
       </div>
         <span slot="footer" class="dialog-footer">
@@ -188,7 +188,7 @@
       getTopSession() {
         let self = this
         let url = window.location.href
-        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=bc3f854e28427d07720b570030f99aea';
+        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=87529c75be13ac67cacf67936d9d738f';
         // console.log("url", url.split('=')[1]);
         let token = url.split('=')[1];
         fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {
@@ -206,7 +206,6 @@
           } else {
             if(Cookies.get('topsession')){
               self.token = Cookies.get('topsession')
-              console.log("Cookies.get('user_id')",Cookies.get('user_id'))
               self.textGet()
             } else {
               window.location.href ='https://user.moe.edu.cn/www/uc/cas/logout?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice%3Dhttps%253A%252F%252Fmap.data.moe.edu.cn%252Fchat%252F'
@@ -306,6 +305,7 @@
         this.$confirm('确认退出？')
           .then(_ => {
             Cookies.remove('topsession'); // 删除cookie
+            Cookies.remove('user_id'); // 删除user_id
             window.location.href = 'https://user.moe.edu.cn/www/uc/cas/logout?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice%3Dhttps%253A%252F%252Fmap.data.moe.edu.cn%252Fchat%252F'
           })
           .catch(_ => {});
