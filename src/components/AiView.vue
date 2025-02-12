@@ -128,7 +128,7 @@
           <el-upload class="upload-demo" drag accept=".docx, .txt, .pdf, .csv" :http-request="uploadBpmn"
             :before-upload="beforeUpload" action="#" :show-file-list="false">
             <div class="el-upload__text"><em style="color: #0052D9;">点击上传</em> / 将文件拖入此区域</div>
-            <div class="el-upload__tip" slot="tip">文件支持docx、pdf、 csv, txt，大小不得超过50M<br>免责声明：用户上传文件需自担风险，与本平台无关。请确保非涉密且合法。</div>
+            <div class="el-upload__tip" slot="tip">文件支持docx、pdf、 csv、txt，大小不得超过50M<br>免责声明：用户上传文件需自担风险，与本平台无关。请确保非涉密且合法。</div>
           </el-upload>
       </div>
         <span slot="footer" class="dialog-footer">
@@ -250,6 +250,14 @@
         this.dialogVisible = false
       },
       beforeUpload(file) { // 上传文件之前钩子
+        let type = file.name.split('.')[1]
+        if (type !== 'docx' && type !== 'txt' && type !== 'pdf' && type !== 'csv') {
+          this.$message({
+            type: 'error',
+            message: '文件格式错误！文件仅支持docx、pdf、 csv、txt！！！！'
+          })
+          return false
+        }
         if (file.size > 1024 * 1024 * 50) {
           this.$message({
             type: 'error',
