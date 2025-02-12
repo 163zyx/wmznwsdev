@@ -130,6 +130,7 @@
 </template>
 <script>
 import {getApiUrl} from "../../../utils";
+import Cookies from 'vue-cookies';
 
 export default {
     name: 'knowledgeBase',
@@ -174,7 +175,7 @@ export default {
           method: 'GET',
           query: param,
           headers: {
-            'X-User-ID': '1',
+            'X-User-ID': Cookies.get('user_id'),
           },
         }).then(function (data) {
           return data.text();

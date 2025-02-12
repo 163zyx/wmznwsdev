@@ -187,8 +187,8 @@
     methods: {
       getTopSession() {
         let self = this
-        // let url = window.location.href
-        let url = 'https://officechat.emic.edu.cn/analyse/#/?token=7b77afe718ac12ea2b3339c920026f48';
+        let url = window.location.href
+        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=bc3f854e28427d07720b570030f99aea';
         // console.log("url", url.split('=')[1]);
         let token = url.split('=')[1];
         fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {
@@ -201,10 +201,12 @@
           if(res.status === 'success') {
             let result = res.result
             self.token = result.token
+            Cookies.set('user_id', decodeURIComponent(result.user_id));
             Cookies.set('topsession', decodeURIComponent(result.token));
           } else {
             if(Cookies.get('topsession')){
               self.token = Cookies.get('topsession')
+              console.log("Cookies.get('user_id')",Cookies.get('user_id'))
               self.textGet()
             } else {
               window.location.href ='https://user.moe.edu.cn/www/uc/cas/logout?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice%3Dhttps%253A%252F%252Fmap.data.moe.edu.cn%252Fchat%252F'
@@ -271,7 +273,7 @@
           method: 'POST',
           body:formData,
           headers: {
-              'X-User-ID': '1',
+              'X-User-ID': Cookies.get('user_id'),
           },
         }).then(function (data) {
           return data.text();

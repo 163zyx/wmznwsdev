@@ -210,6 +210,7 @@ import ecStat from 'echarts-stat';
 import MarkdownIt from 'markdown-it';
 import sseMixin from "../../../utils/sseMixin";
 import {getApiUrl} from "../../../utils";
+import Cookies from 'vue-cookies';
 
 export default {
     mixins: [sseMixin],
@@ -330,7 +331,6 @@ export default {
       }
     },
     mounted() {
-
     },
     methods: {
       getApiUrl,
@@ -732,9 +732,9 @@ export default {
           this.chatLock = true;
           this.initSSE(this.selectUrl,{
             'query': value,
-            'user': '1122332',
+            'user': Cookies.get('user_id'),
             "inputs": {
-              'user_id': '1122332',
+              'user_id': Cookies.get('user_id'),
             },
             "response_mode": "streaming",
             "conversation_id": "",
