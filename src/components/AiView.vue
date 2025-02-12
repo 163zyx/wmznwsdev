@@ -188,7 +188,7 @@
       getTopSession() {
         let self = this
         // let url = window.location.href
-        let url = 'https://officechat.emic.edu.cn/analyse/#/?token=b1d0833b5f6f9dad2fc5d2595468a70a';
+        let url = 'https://officechat.emic.edu.cn/analyse/#/?token=7b77afe718ac12ea2b3339c920026f48';
         // console.log("url", url.split('=')[1]);
         let token = url.split('=')[1];
         fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {
@@ -197,7 +197,7 @@
           return data.text()
         }).then(function (data) {
           let res = JSON.parse(data)
-          console.log("res",res)
+          // console.log("res",res)
           if(res.status === 'success') {
             let result = res.result
             self.token = result.token
@@ -263,10 +263,10 @@
         const formData = new FormData()
         formData.append('file', param.file) // 传入文件
         console.log("formdata1", formData)
-        // let url = "http://10.0.10.187:8081/smiling/knowledge/file/upload"
+        // let url = "https://officechat.emic.edu.cn/smiling/knowledge/file/upload"
         // https://officechat.emic.edu.cn 正式
         // http://39.106.131.95:9002 测试
-        fetch('http://10.0.10.187:8081/smiling/knowledge/file/upload', {
+        fetch('https://officechat.emic.edu.cn/smiling/knowledge/file/upload', {
           // fetch('http://39.106.131.95:9002/education/verify', {
           method: 'POST',
           body:formData,
@@ -282,7 +282,7 @@
           } else {
             that.$message.error(res.message);
           }
-          that.loading = false;
+          that.uploading = false;
           that.uploadVisible = false;
           that.$refs.baseRef.getBaseList()
         }).catch(err => {

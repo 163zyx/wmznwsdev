@@ -169,7 +169,7 @@ export default {
           'page': self.currentPage,
           'size': 10,
         }
-        fetch('http://10.0.10.187:8081/smiling/knowledge/file/list', {
+        fetch('https://officechat.emic.edu.cn/smiling/knowledge/file/list', {
           // fetch('http://39.106.131.95:9002/education/verify', {
           method: 'GET',
           query: param,
@@ -205,7 +205,7 @@ export default {
       },
       handleDelete(index, row) {
         let self = this
-        let url = `http://10.0.10.187:8081/smiling/knowledge/file/delete/${row.id}`;
+        let url = `https://officechat.emic.edu.cn/smiling/knowledge/file/delete/${row.id}`;
         fetch(url, {
           method: 'DELETE',
         }).then(function (data) {

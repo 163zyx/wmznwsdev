@@ -24,7 +24,7 @@
             </div>
 
 
-            <p class="dfxx-right-content">我拥有人工智能语言模型和BI双重能力，可以分析需求，并用可视化图表解答您的问题，也可以根据图表总结业务结论。</p>
+            <p class="dfxx-right-content">我拥有DeepSeek人工智能语言模型和BI双重能力，可以分析需求。</p>
             <!-- <p class="dfxx-right-content">目前我已经学习到的数据知识，包含： -->
               <!-- <el-button type="text" @click="showImg(require('../img/1.png'))">数据范围</el-button> 20240506暂时数据范围-->
             <!-- </p> -->
@@ -155,7 +155,7 @@
                   </div>
                 </div>
               </div>
-              <div class="dfquery-remark">
+              <!-- <div class="dfquery-remark">
                 <div v-if="item.loadings" class="loading">
                     <div></div>
                     <div></div>
@@ -176,25 +176,25 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
 
         </template>
       </div>
       <div class="xz-right-foot">
-        <el-select class="select_url" v-model="selectUrl" slot="prepend" placeholder="请选择">
-          <!-- <el-option label="年鉴数据" :value="getApiUrl('/glm/v2/chatdata?v=4&t=nj&q=')"></el-option> -->
+        <!-- <el-select class="select_url" :disabled="chatLock"  v-model="selectUrl" slot="prepend" placeholder="请选择">
+          <el-option label="年鉴数据" :value="getApiUrl('/glm/v2/chatdata?v=4&t=nj&q=')"></el-option>
           <el-option label="知识库数据" value="http://10.20.13.207/v1/chat-messages"></el-option>
-          <!-- el-option label="业务数据" value="http://10.40.241.6:17862/glm/v2/chatdata?v=4&t=jck&q="></el-option>
+          <el-option label="业务数据" value="http://10.40.241.6:17862/glm/v2/chatdata?v=4&t=jck&q="></el-option>
           <el-option label="经济人口" value="http://10.40.241.6:17862/glm/v2/chatdata?v=4&t=jr&q="></el-option>
-          <el-option label="Auto" value="http://10.40.241.6:17862/glm/v3/chat?q="></el-option-->
-        </el-select>
+          <el-option label="Auto" value="http://10.40.241.6:17862/glm/v3/chat?q="></el-option>
+        </el-select> -->
         <div id="useTemplate" v-if="useTemplate"></div>
-        <el-input v-else v-model="chatText" type="textarea" :rows="2"
+        <el-input v-else v-model="chatText" :disabled="chatLock" type="textarea" :autosize="{ minRows: 4, maxRows: 8}"
         placeholder="请输入问题相关描述" @keydown.enter="sendChat()">
         </el-input>
-        <el-button icon="el-icon-plus" v-if="!selectUrl" circle style="margin-left: 5px;" @click="openUpdate"></el-button>
+        <el-button icon="el-icon-plus" circle style="margin-left: 5px;" @click="openUpdate"></el-button>
         <el-button :disabled="chatLock" @click="sendChat()">发送</el-button>
       </div>
 
@@ -223,22 +223,28 @@ export default {
         // selectUrl: 'https://officechat.emic.edu.cn/glm/v2/chatdata?v=4&t=nj&q=',
         // selectUrl: 'http://47.123.4.81:3389/glm/test?v=4&t=nj&q=',
         // selectUrl: getApiUrl('/glm/v2/chatdata?v=4&t=nj&q='),
-        selectUrl: 'http://10.20.13.207/v1/chat-messages',
+        selectUrl: 'https://officechat.emic.edu.cn/v1/chat-messages',
         dialogVisible: false,
         image: '',
         AIList: [],
-        contentBox: [{
-              name: '2013-2022全国普通高校研究生招生人数',
-            },
-            // {
-            //   name: '当前上海普通高中在校生人数',
-            // }, {
-            //   name: '近五年黑龙江省小学入学人数',
-            // },
-            {
-              name: '2013-2022年北京、上海、广东高中毕业生数',
-            },
-],
+        contentBox: [
+          {
+            name: '通知模板：你作为[单位/部门名称]的[具体职务]，起草一份关于[事项主题]的通知，需包含[具体要素1]、[具体要素2]、[具体要素3]，语言简洁无形容词，符合《党政机关公文格式》要求。',
+          },
+          {
+            name: '请示类公文：以[单位名称]名义向[上级单位名称]提交关于[请示事项]的请示，需说明[背景原因]、[具体请求内容]、[解决方案建议]，结尾使用妥否，请批示规范用语。',
+          }, {
+            name: '函（平行单位）：以[发函单位]名义致[收函单位]的商洽函，主题为[事项说明]，需明确[协作需求]、[时间节点]、[联系方式]，措辞礼貌得体，不加必须务必等强制性词汇',
+          },
+          {
+            name: '讲话稿：撰写[职务+姓名]在[会议/活动名称]上的讲话稿，突出[3个核心观点]，融入[近期政策关键词]，引用[本地数据案例]，口语化表达但保持权威感，时长控制在20分钟内。',
+          },
+          {
+            name: '政策学习心得体会：以[职务+姓名]身份撰写学习[政策文件/会议精神名称]的心得体会，结合[具体业务领域]实际，包含"[认识提升]-[差距分析]-[落实举措]"三部分，引用原文金句不超过3处，禁用空话套话，字数1200字左右。',
+          }, {
+            name: '项目立项申请书：起草[项目名称]立项申请，结构含"[必要性]-[可行性]-[实施计划]-[效益分析]"，需引用[上位规划文件编号]，资金预算精确到万元，标注用地/环评等前置手续办理进度，附专家论证意见摘要。',
+          },
+        ],
         // type: 'bar',
         loading: false,
 
@@ -274,14 +280,12 @@ export default {
           }
           const item = this.chatData[this.chatData.length - 1];
           console.log("this.chatData[this.chatData.length - 1];",this.chatData[this.chatData.length - 1])
-          console.log("item",this.chatData[this.chatData.length - 1])
           if (val.response) {
             if (!item.responseText) {
               this.renderResponseInx = 0;
             }
             this.renderResponseInterval = setInterval(() => {
               const item = this.chatData[this.chatData.length - 1];
-              console.log('item.response:', item)
               if (this.renderResponseInx >= item.response.length) {
                 clearInterval(this.renderResponseInterval);
                 this.renderResponseInterval = null;
@@ -291,6 +295,7 @@ export default {
               } else {
                 item.responseText = item.responseText + item.response[this.renderResponseInx];
                 item.responseMdText = this.getMarkdown().render(item.responseText);
+                // item.responseMdText = this.getMarkdown().myThinkRender(item.responseText);
                 this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item));
                 this.chatData = JSON.parse(JSON.stringify(this.chatData));
                 this.renderResponseInx++;
@@ -335,12 +340,33 @@ export default {
           linkify: true,
           typographer: true,
         });
+        	// 添加规则
+          md.core.ruler.push('show-line', (state)=> {
+            // forEach 遍历 tokens
+            state.tokens.forEach(token => {
+                    // token.map 即所在的行数
+                    console.log('token', token)
+                    if (token.map) {
+                      // 起始行
+                        const start  = ["data-line-start", token.map[0].toString()]
+                        // 结束行
+                        const end  = ["data-line-end", token.map[1].toString()]
+                        // 初始化属性
+                        token.attrs = token.attrs || []
+                        // 添加属性
+                        token.attrs.push(start,end)
+                    }
+                })
+            return true;
+          });
+ 
+
         // 禁用默认的列表解析器
         // md.disable('list');
         // 自定义表格渲染器
         function myTableRender(tokens, idx, options, env, self) {
           const token = tokens[idx];
-          // 检查 token 是否是表格
+          console.log("token", token)
           if (token.type === 'table_open') {
             // 添加一个自定义的类到 table 标签
             return '<table class="markdown-table">';
@@ -403,52 +429,51 @@ export default {
             result += sseMessages[i].answer
           }
         }
-        let item = this.chatData[this.chatData.length - 1];
-        item.response = result;
-        // item.response_status = 'loading';
-        console.log("item", item)
-        // this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
-        // this.chatData = JSON.parse(JSON.stringify(this.chatData));
-        // console.log("Txtresult", result)
-        // console.log("d", d)
-        // if (!d.length) return
+        console.log("Txtresult", result)
+        console.log("d", d)
+        if (!d.length) return
 
-        // if (this.chatData.length > 0) {
-        //   console.log('this.chatData', this.chatData)
-        //   let item = this.chatData[this.chatData.length - 1];
-        //   item.loading = false;
-        //   const latestRes = d[d.length - 1];
-        //   console.log('latestRes', latestRes)
-        //   let resType = '';
-        //   if (latestRes.event === 'message') {
-        //     resType = 'text'
-        //     item.response = result;
-        //     item.response_status = 'loading';
-        //     console.log("Txtresult", result)
-        //     // 会在watch-latestChatResponse里面渲染text，并执行afterChatSuccess
-        //     // if (latestRes.status === 'finish') {
-        //     //   // 手动结束sse
-        //     //   this.closeSSE();
-        //     // }
-        //   } else {
-        //     // if (latestRes.event === 'message_end') {
-        //     //   // 手动结束sse
-        //     //   this.closeSSE();
-        //     // }
-        //     // resType = 'echarts'
-        //     // item.response = '';
-        //     // item.loadings = false;
-        //   }
-        //   this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
-        //   this.chatData = JSON.parse(JSON.stringify(this.chatData));
-        //   // if (resType === 'echarts') {
-        //   //   // 手动结束sse
-        //   //   this.closeSSE();
-        //   //   // 渲染表格
-        //   //   this.renderEcharts(item, latestRes);
-        //   //   this.afterChatSuccess(item, latestRes);
-        //   // }
-        // }
+        if (this.chatData.length > 0) {
+          console.log('this.chatData', this.chatData)
+          let item = this.chatData[this.chatData.length - 1];
+          item.loading = false;
+          const latestRes = d[d.length - 1];
+          let resType = '';
+          if (latestRes.event === 'message') {
+            resType = 'text'
+            item.response = result;
+            item.response_status = 'loading';
+            console.log("Txtresult", result)
+            // 会在watch-latestChatResponse里面渲染text，并执行afterChatSuccess
+            // if (latestRes.status === 'finish') {
+            //   // 手动结束sse
+            //   this.closeSSE();
+            // }
+          } else {
+            item.response = result;
+            item.response_status = 'loading';
+          }
+          if (latestRes.event === 'message_end') {
+            // 手动结束sse
+            this.closeSSE();
+            item.loadings = false;
+            item.response_status === 'finish';
+            this.chatComplete();
+          }
+          this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
+          this.chatData = JSON.parse(JSON.stringify(this.chatData));
+          // if (resType === 'echarts') {
+          //   // 手动结束sse
+          //   this.closeSSE();
+          //   // 渲染表格
+          //   this.renderEcharts(item, latestRes);
+          //   this.afterChatSuccess(item, latestRes);
+          // }
+        }
+      },
+      chatComplete() {
+        this.chatLock = false;
+        this.chatText = '';
       },
       async afterChatSuccess(item, d) {
         try {
@@ -708,7 +733,9 @@ export default {
           this.initSSE(this.selectUrl,{
             'query': value,
             'user': '1122332',
-            "inputs": {},
+            "inputs": {
+              'user_id': '1122332',
+            },
             "response_mode": "streaming",
             "conversation_id": "",
           });
