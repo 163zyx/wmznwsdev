@@ -293,7 +293,9 @@
           }
           that.uploading = false;
           that.uploadVisible = false;
-          that.$refs.baseRef.getBaseList()
+          if(that.$refs.baseRef){
+            that.$refs.baseRef.getBaseList()
+          }
         }).catch(err => {
           that.$message.error(err);
         })
