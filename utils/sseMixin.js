@@ -1,5 +1,6 @@
 // sseMixin.js
 import {SSE} from "sse.js";
+import Cookies from 'vue-cookies';
 
 export default {
   data() {
@@ -21,6 +22,7 @@ export default {
           headers: {
             'Authorization': 'Bearer app-MZtc1HrKa4mPEYPJh1JaJHDB', // 替换为实际的授权令牌
             'Content-Type': 'application/json',
+            'topsession': Cookies.get('topsession'),
           }
         });
       } else {

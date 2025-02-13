@@ -221,7 +221,8 @@ export default {
         // selectUrl: 'https://officechat.emic.edu.cn/glm/v2/chatdata?v=4&t=nj&q=',
         // selectUrl: 'https://map.data.moe.edu.cn/rest/glm/chatdata?t=nj&q=',
         // selectUrl: 'http://47.123.4.81:3389/glm/test?v=4&t=nj&q=',
-        selectUrl: getApiUrl('/glm/v2/chatdata?v=4&t=nj&q='),
+        // selectUrl: getApiUrl('/glm/v2/chatdata?v=4&t=nj&q='),
+        selectUrl: 'https://map.data.moe.edu.cn/rest/glm/analyse',
         dialogVisible: false,
         image: '',
         AIList: [],
@@ -652,78 +653,74 @@ export default {
         if (this.chatLock) {
           return
         }
-        
-        // fetch('https://map.data.moe.edu.cn/rest/glm/chatdata?t=nj&q='+ this.chatText, {
-        //   // fetch('http://39.106.131.95:9002/education/verify', {
-        //   method: 'POST',
-        //   headers: {
-        //     'topsession': Cookies.get('topsession')
-        //   },
-        // }).then(function (data) {
-        //   return data.text();
-        // }).then(function (data) {
-        //   var res = JSON.parse(data)
-        //   console.log("res", res)
-        //   // if (res.status === 1000) {
-        //   //   that.$message.success(res.message);
-        //   // } else {
-        //   //   that.$message.error(res.message);
-        //   // }
-        // }).catch(err => {
-        //   that.$message.error(err);
-        // });
-
-        let item = {
-          query: value,
-          loading: true,
-          loadings: true,
-          time: new Date().getTime(),
-          QuestionAndAnswer: {},
-          wdbadShow: false,
-          wdpj: '',
-          wdpjinfo: {},
-          showChart: false,
-          wdbadpjinfo: {
-            inputvalue: '',
-            badinfo: [],
+        that.chatLock = true;
+        fetch('https://map.data.moe.edu.cn/rest/glm/chatdata?t=nj&q='+ this.chatText, {
+          // fetch('http://39.106.131.95:9002/education/verify', {
+          method: 'POST',
+          headers: {
+            'topsession': Cookies.get('topsession')
           },
-          AIList: [],
-          type: 'bar',
-          responseText: '',
-          responseMdText: '',
-          response_status: '',
-        }
-        this.chatData.push(item)
-        this.$nextTick(() => {
-          document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
-            .scrollHeight
-        })
-        this.useTemplate = false
-
-        let d
-        try {
-          // sse请求
-          this.chatLock = true;
-          this.initSSE(this.selectUrl + value);
-
-          /*// 如果需要进行超时就在调用这个方法，fetchWithTimeout
-          d = await this.fetchWithTimeout(this.selectUrl + value, {
-            method: 'POST',
-            timeout: 150000
-          })
-          d = await d.json()
-          console.log(d)*/
-        } catch (error) {
-          console.error("超时错误：", error);
-          item.loading = false
-          this.$nextTick(() => {
+        }).then(function (data) {
+          return data.text();
+        }).then(function (data) {
+          var res = JSON.parse(data)
+          console.log("res", res)
+          let resData = res.result[1].data
+          console.log("resData", {'data':JSON.stringify(resData)})
+          let item = {
+            query: value,
+            loading: true,
+            loadings: true,
+            time: new Date().getTime(),
+            QuestionAndAnswer: {},
+            wdbadShow: false,
+            wdpj: '',
+            wdpjinfo: {},
+            showChart: false,
+            wdbadpjinfo: {
+              inputvalue: '',
+              badinfo: [],
+            },
+            AIList: [],
+            type: 'bar',
+            responseText: '',
+            responseMdText: '',
+            response_status: '',
+          }
+          that.chatData.push(item)
+          that.$nextTick(() => {
             document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
               .scrollHeight
           })
-          return
-        }
+          that.useTemplate = false
 
-        return;
+          let d
+          try {
+            // sse请求
+            that.initSSE(that.selectUrl, {'data':JSON.stringify(resData)}, 'change');
+            // this.initSSE(this.selectUrl + value);
+            /*// 如果需要进行超时就在调用这个方法，fetchWithTimeout
+            d = await this.fetchWithTimeout(this.selectUrl + value, {
+              method: 'POST',
+              timeout: 150000
+            })
+            d = await d.json()
+            console.log(d)*/
+          } catch (error) {
+            console.error("超时错误：", error);
+            item.loading = false
+            this.$nextTick(() => {
+              document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
+                .scrollHeight
+            })
+            return
+          }
+
+          return;
+        }).catch(err => {
+          that.$message.error(err);
+        });
+
 
         // fetch(`http://10.40.241.6:17862/glm/v2/recommend?q=${this.chatText}`, {
         //   method: 'POST'
