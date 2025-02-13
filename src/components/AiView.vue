@@ -97,7 +97,7 @@
     <footer v-if="tabSelected === 0 || tabSelected === 4 || tabSelected === 5">
       <p>业务指导单位：
         <!--span style="margin-right: 36px;">科学技术与信息化司</span-->
-        <span>发展规划司</span>
+        <span>科学技术与信息化司    发展规划司 </span>
         </p>
       <p>
         <span>技术支持单位：教育管理信息中心</span>
