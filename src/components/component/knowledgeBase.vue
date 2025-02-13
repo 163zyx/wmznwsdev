@@ -207,22 +207,26 @@ export default {
       },
       handleDelete(index, row) {
         let self = this
-        let url = `https://officechat.emic.edu.cn/smiling/knowledge/file/delete/${row.id}`;
-        fetch(url, {
-          method: 'DELETE',
-        }).then(function (data) {
-          return data.text();
-        }).then(function (data) {
-          var res = JSON.parse(data)
-          if (res.status === 1000) {
-            self.$message.success('删除成功');
-            self.getBaseList();
-          } else {
-            self.$message.error(res.message);
-          }
-        }).catch(err => {
-          self.$message.error(err);
-        })
+        self.$confirm('确认删除？')
+          .then(_ => {
+            let url = `https://officechat.emic.edu.cn/smiling/knowledge/file/delete/${row.id}`;
+            fetch(url, {
+              method: 'DELETE',
+            }).then(function (data) {
+              return data.text();
+            }).then(function (data) {
+              var res = JSON.parse(data)
+              if (res.status === 1000) {
+                self.$message.success('删除成功');
+                self.getBaseList();
+              } else {
+                self.$message.error(res.message);
+              }
+            }).catch(err => {
+              self.$message.error(err);
+            })
+          })
+          .catch(_ => {});
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);

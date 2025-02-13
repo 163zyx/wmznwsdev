@@ -762,7 +762,6 @@ export default {
           })
           return
         }
-
         return;
 
         // fetch(`http://10.40.241.6:17862/glm/v2/recommend?q=${this.chatText}`, {
