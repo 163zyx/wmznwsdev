@@ -5,7 +5,7 @@
         <div class="left">
           <img src="./img/logo2.png" alt="" />
           <div class="left_zi">
-            <p class="p1">智能问数</p>
+            <p class="p1">AI助手</p>
             <!-- <p class="p2">OFFICE ASSISTANT</p> -->
           </div>
         </div>
@@ -124,16 +124,19 @@
         :visible.sync="uploadVisible"
         width="60%"
         :before-close="handleClose">
+        <div style="display: flex;flex-direction: row-reverse;">
+          <el-button type="primary" @click="toKnowleageBase">前往知识库</el-button>
+        </div>
         <div class="baseBox bin" v-loading="uploading">
           <el-upload class="upload-demo" drag accept=".docx, .txt, .pdf, .csv" :http-request="uploadBpmn"
             :before-upload="beforeUpload" action="#" :show-file-list="false">
             <div class="el-upload__text"><em style="color: #0052D9;">点击上传</em> / 将文件拖入此区域</div>
-            <div class="el-upload__tip" slot="tip">文件支持docx、pdf、 csv、txt，大小不得超过50M<br>免责声明：用户上传文件需自担风险，与本平台无关。请确保非涉密且合法。</div>
+            <div class="el-upload__tip" slot="tip">文件支持docx、pdf、 csv、txt，大小不得超过15M<br>免责声明：1，本系统上传文件均保存在部内私有云环境的个人目录下，请放心使用。<br>2，切勿上传<span style="color: red">涉密</span>文件，后果自负，与本平台无关。</div>
           </el-upload>
       </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="uploadVisible = false">取 消</el-button>
           <el-button type="primary" @click="uploadVisible = false">确 定</el-button>
+          <el-button @click="uploadVisible = false">取 消</el-button>
         </span>
     </el-dialog>
   </div>
@@ -258,10 +261,10 @@
           })
           return false
         }
-        if (file.size > 1024 * 1024 * 50) {
+        if (file.size > 1024 * 1024 * 15) {
           this.$message({
             type: 'error',
-            message: '文件大小不得超过50M！'
+            message: '文件大小不得超过15M！'
           })
           return false
         }
@@ -302,7 +305,6 @@
       },
       updateDialog(){
         this.uploadVisible = true
-        // console.log(this.form)
       },
       handleClose(done) {
         this.$confirm('确认关闭？')
@@ -319,6 +321,10 @@
             window.location.href = 'https://user.moe.edu.cn/www/uc/cas/logout?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice%3Dhttps%253A%252F%252Fmap.data.moe.edu.cn%252Fchat%252F'
           })
           .catch(_ => {});
+      },
+      toKnowleageBase() {
+        this.uploadVisible = false
+        this.tabSelected = 4
       },
     }
   }
