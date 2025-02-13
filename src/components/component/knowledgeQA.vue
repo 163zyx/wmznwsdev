@@ -82,7 +82,7 @@
                   <div style="width: 100%;display: flex;flex-direction: row;justify-content: space-between;">
                     <div>
                       <p v-if="item.showChart" style="font-size: 15px;line-height: 27px;"></p>
-                      <p v-else style="font-size: 15px;line-height: 27px;"  v-html="item.responseMdText || '未找到该内容'"></p>
+                      <p v-else style="font-size: 15px;line-height: 27px;"  v-html="item.responseMdText || '思考中......'"></p>
                     </div>
                     <!-- <div v-if="item.showChart" style="flex:1;display:flex;justify-content: flex-end;margin-top: -10px;">
                       <el-radio-group v-model="item.type" @change="handleRadioChange(item.type, item)">
