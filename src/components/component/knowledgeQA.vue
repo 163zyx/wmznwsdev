@@ -24,7 +24,7 @@
             </div>
 
 
-            <p class="dfxx-right-content">我拥有DeepSeek人工智能语言模型和BI双重能力，可以分析需求。</p>
+            <p class="dfxx-right-content">我是基于DeepSeek-r1的人工智能小助手，可以协助您完成各类公文的写作。</p>
             <!-- <p class="dfxx-right-content">目前我已经学习到的数据知识，包含： -->
               <!-- <el-button type="text" @click="showImg(require('../img/1.png'))">数据范围</el-button> 20240506暂时数据范围-->
             <!-- </p> -->
