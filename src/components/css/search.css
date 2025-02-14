@@ -637,6 +637,12 @@ header {
   padding-bottom: 20px;
   overflow: auto;
 }
+.knowledge-right-main {
+  width: 100%;
+  height: calc(100% - 44px);
+  padding-bottom: 20px;
+  overflow: auto;
+}
 
 .dfxx {
   width: 793px;
@@ -687,6 +693,18 @@ header {
   width: 685px;
   padding: 20px;
   margin-top: 14px;
+}
+
+.knowledge-box {
+  /* background: linear-gradient(137deg, #F4F7FA 0%, #E9F1FC 100%); */
+  display: flex;
+  border-radius: 2px 2px 2px 2px;
+  width: 685px;
+  /* padding: 20px; */
+  margin-top: 14px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .cnxw-content-box ul {

@@ -40,23 +40,19 @@
 
             <div class="cnxw">
               <p class="cnxw-title">请试着这样问我</p>
-              <div class="cnxw-content-box">
-                <ul>
-                  <li v-for="(item, index) in contentBox" :key="index" @click="copyTemplate(item.content)">
-                    {{ item.name }}
-                  </li>
-                  <!-- <li @click="copyTemplate('2016-2022北京高中教师人数')">
-                    2016-2022年北京高中教师人数</li>
-                  <li @click="copyTemplate('2022年各省幼儿园数量')">
-                    2022年各省幼儿园数量</li>
-                  <li @click="copyTemplate('2013-2022年全国小学阶段每年在校生数量')">
-                    2013-2022年全国小学阶段每年在校生数量</li>
-                  <li @click="copyTemplate('2022年小学阶段各省在校生数')">
-                    2022年小学阶段各省在校生数</li>
-
-                  <li @click="copyTemplate('2015至2022年北京、黑龙江省小学入学人数')">
-                    2015至2022年北京、黑龙江省小学入学人数</li> -->
-                </ul>
+              <div class="knowledge-box">
+                <el-tag
+                  v-for="tag in contentBox"
+                  :key="tag.name"
+                  :closable="true"
+                  :type="''" 
+                  @click="copyTemplate(tag.content)"
+                  :disable-transitions="false"
+                  @close="handleClose(tag)"
+                  style="cursor: pointer;"
+                >
+                  {{tag.name}}
+                </el-tag>
               </div>
             </div>
           </div>
@@ -1165,8 +1161,10 @@ export default {
       }else{
         document.getElementById('think').className = 'tip'
       }
-
-    }
+    },
+    handleClose(tag) {
+      this.contentBox.splice(this.contentBox.indexOf(tag), 1);
+    },
   }
 }
 </script>

@@ -191,7 +191,7 @@
       getTopSession() {
         let self = this
         let url = window.location.href
-        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=d5d8e59997ca6a5b73993f290cd743b0';
+        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=698d26133335add5b105a5f0ed25c700';
         // console.log("url", url.split('=')[1]);
         let token = url.split('=')[1];
         fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {

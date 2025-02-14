@@ -665,9 +665,7 @@ export default {
           return data.text();
         }).then(function (data) {
           var res = JSON.parse(data)
-          console.log("res", res)
           let resData = res.result[1].data
-          console.log("resData", {'data':JSON.stringify(resData)})
           let item = {
             query: value,
             loading: true,
