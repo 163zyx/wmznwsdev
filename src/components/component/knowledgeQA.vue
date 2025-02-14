@@ -45,7 +45,7 @@
                   v-for="tag in contentBox"
                   :key="tag.name"
                   :closable="true"
-                  :type="''" 
+                  :type="''"
                   @click="copyTemplate(tag.content)"
                   :disable-transitions="false"
                   @close="handleClose(tag)"
@@ -220,6 +220,12 @@ import Cookies from 'vue-cookies';
 
 export default {
   mixins: [sseMixin],
+  props: {
+    type: {
+      type: Number,
+      default: 5,
+    },
+  },
   data() {
     return {
       show:false,
@@ -350,6 +356,8 @@ export default {
     }
   },
   mounted() {
+    this.getHistory()
+
   },
   methods: {
     getApiUrl,
@@ -1159,14 +1167,81 @@ export default {
     openUpdate() {
       this.$parent.updateDialog();
     },
-    showAndHide() {
+    showAndHide(index) {
       this.show = !this.show
-      if(this.show){
-        document.getElementById('think').className = 'collapsible tip'
+      this.showIndex = index
+      if (this.show) {
+        document.getElementById('think-'+index).className = 'collapsible tip'
 
-      }else{
-        document.getElementById('think').className = 'tip'
+      } else {
+        document.getElementById('think-'+index).className = 'tip'
       }
+
+    },
+    addHistory(data) {
+      // 保存问题和答案
+
+      console.log("params", data)
+      const x = fetch("http://10.20.13.201:80/smiling/education/add/history", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;',
+          "X-User-ID": Cookies.get('user_id'),
+        },
+        body: JSON.stringify(data),
+      }).then(res=>res.json()).then(data=> {
+        this.getHistory()
+      })
+    },
+    getHistory() {
+      let that = this
+      // console.log(that.chatData)
+      this.chatData = []
+      let item = {
+        query: '',
+        loading: true,
+        time: '',
+        QuestionAndAnswer: {},
+        wdbadShow: false,
+        wdpj: '',
+        wdpjinfo: {},
+        showChart: false,
+        wdbadpjinfo: {
+          inputvalue: '',
+          badinfo: [],
+        },
+        responseText: '',
+        responseMdText: '',
+        response_status: '',
+      }
+      const params = new URLSearchParams();
+      params.append('chatNo', this.type);
+      fetch(`http://10.20.13.201:80/smiling/education/list/history?${params}`, {
+        // fetch('http://39.106.131.95:9002/education/insertWriteFeedback', {
+        method: 'get',
+        headers: {
+          "X-User-ID": Cookies.get('user_id'),
+        }
+      }).then(response => response.json())
+          .then(data =>{
+
+            data.data.forEach((item2,index) => {
+              item.responseMdText = this.getMarkdown().render(item2.answer) ;
+              item.responseMdText = item.responseMdText.replace(/<think>/g, '<think id="think-'+index+'" class="tip"" >');
+              item.responseMdText = item.responseMdText.replace(/<\/think><\/p>/g, '</p></think>');
+              item.responseText =item2.answer;
+              item.time = item2.create_time;
+              item.query = item2.question;
+              item.loading = false;
+              item.loadings = false;
+              item.response_status = "loading";
+              item.wdbadShow = false;
+              that.chatData.push(item);
+              that.chatData = JSON.parse(JSON.stringify(that.chatData));
+              // console.log(that.chatData)
+            })
+          })
+          .catch(error => console.error('Error:', error));
     },
     handleClose(tag) {
       this.contentBox.splice(this.contentBox.indexOf(tag), 1);
@@ -1177,6 +1252,7 @@ export default {
 <style>
 @import '../css/search.css';
 @import '../css/unpkg.com_element-ui@2.15.13_lib_theme-chalk_index.css';
+
 .collapsible {
   display: -webkit-box;
   -webkit-line-clamp: 3; /* 限制行数为3行 */
@@ -1184,17 +1260,21 @@ export default {
   overflow: hidden;
 }
 
-.toggle{
+.toggle {
   float: right;
   transform: rotate(0deg);
+  cursor: pointer;
 }
-.toggleT{
+
+.toggleT {
   transform: rotate(180deg);
 }
-.tip{
+
+.tip {
   color: #C0C4CC;
   font-size: 14px;
 }
+
 #useTemplate {
   width: 100%;
   margin-right: 10px;

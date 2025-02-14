@@ -92,7 +92,7 @@
     </template>
     <!-- 知识库问答部分 -->
     <template v-if="tabSelected == 5">
-      <KnowledgeQA />
+      <KnowledgeQA :type="tabSelected"/>
     </template>
     <footer v-if="tabSelected === 0 || tabSelected === 4 || tabSelected === 5">
       <p>业务指导单位：
