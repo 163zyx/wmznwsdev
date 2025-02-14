@@ -15,7 +15,7 @@
     <div class="xz-right">
       <div class="xz-right-main chat">
         <div class="dfxx">
-          <img src="../img/avatar.png" class="img" alt="" />
+          <img src="../img/avatar.png" class="img" alt=""/>
           <div class="dfxx-right">
             <div class="flex-part">
               <p class="dfxx-right-name">您好，我是智能写作 Bot</p>
@@ -26,7 +26,7 @@
 
             <p class="dfxx-right-content">我是基于DeepSeek-r1的人工智能小助手，可以协助您完成各类公文的写作。</p>
             <!-- <p class="dfxx-right-content">目前我已经学习到的数据知识，包含： -->
-              <!-- <el-button type="text" @click="showImg(require('../img/1.png'))">数据范围</el-button> 20240506暂时数据范围-->
+            <!-- <el-button type="text" @click="showImg(require('../img/1.png'))">数据范围</el-button> 20240506暂时数据范围-->
             <!-- </p> -->
             <!-- <p class="dfxx-right-content">
               （1）2013-2022年度各级各类学生、教师及学校的部分综合统计数据；
@@ -42,8 +42,8 @@
               <p class="cnxw-title">请试着这样问我</p>
               <div class="cnxw-content-box">
                 <ul>
-                  <li v-for="(item, index) in contentBox" :key="index"  @click="copyTemplate(item.content)">
-                    {{item.name}}
+                  <li v-for="(item, index) in contentBox" :key="index" @click="copyTemplate(item.content)">
+                    {{ item.name }}
                   </li>
                   <!-- <li @click="copyTemplate('2016-2022北京高中教师人数')">
                     2016-2022年北京高中教师人数</li>
@@ -65,7 +65,7 @@
           <div v-for="(item,index) in chatData" :key="index">
             <div class="my-query">
               <p class="content">{{ item.query }}</p>
-              <img src="../img/touxiang.png" alt="" class="img" />
+              <img src="../img/touxiang.png" alt="" class="img"/>
             </div>
             <div v-if="item.loading" class="loading">
               <div></div>
@@ -76,11 +76,14 @@
             </div>
             <div v-if="!item.loading">
               <div class="dfquery">
-                <img src="../img/avatar.png" class="img" alt="" />
+                <img src="../img/avatar.png" class="img" alt=""/>
                 <div class="content" :class="'content-df'+ index"
-                  style="display: flex;flex-direction: column;align-items: flex-start;">
+                     style="display: flex;flex-direction: column;align-items: flex-start;">
                   <div style="width: 100%;display: flex;flex-direction: row;justify-content: space-between;">
-                    <div>
+                    <div style="width: 100%">
+                      <div class="toggle" @click="showAndHide" :class="['toggle',show?'toggleT':'']">
+                        <svg t="1739439600007" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4171" width="32" height="32"><path d="M904 692c0 8.189-3.124 16.379-9.372 22.628-12.497 12.496-32.759 12.496-45.256 0L512 377.255 174.628 714.628c-12.497 12.496-32.758 12.496-45.255 0-12.497-12.498-12.497-32.758 0-45.256l360-360c12.497-12.496 32.758-12.496 45.255 0l360 360C900.876 675.621 904 683.811 904 692z" fill="#8a8a8a" p-id="4172"></path></svg>
+                      </div>
                       <p v-if="item.showChart" style="font-size: 15px;line-height: 27px;"></p>
                       <p v-else style="font-size: 15px;line-height: 27px;"  v-html="item.responseMdText || '思考中......'"></p>
                     </div>
@@ -98,27 +101,29 @@
                     </div> -->
                   </div>
 
-                  <div v-show="item.showChart && item.type === 'bar'" :id="`chart${index}`" style="width: 600px;height:400px;"></div>
-                  <div v-show="item.showChart && item.type === 'line'" :id="`chart${index}` + '0'" style="width: 600px;height:400px;"></div>
+                  <div v-show="item.showChart && item.type === 'bar'" :id="`chart${index}`"
+                       style="width: 600px;height:400px;"></div>
+                  <div v-show="item.showChart && item.type === 'line'" :id="`chart${index}` + '0'"
+                       style="width: 600px;height:400px;"></div>
 
                   <div class="tip" v-if="item.chartData && item.chartData[1].data.source">
-                    <span class="tip_text">数据来源：{{item.chartData[1].data.source}}</span>
+                    <span class="tip_text">数据来源：{{ item.chartData[1].data.source }}</span>
                   </div>
                   <div class="tip" v-show="item.showChart">
                     <span class="tip_text">根据你的需求，我为你生成了相应图表，也可以生成与本图表相关的一些分析。</span>
                     <el-button type="text" @click="handleNeedCommend(item)">需要分析</el-button>
                   </div>
                   <div style="width: 100%;display: flex;justify-content: flex-end;" class="duifangcontent"
-                    v-if="item.copy">
+                       v-if="item.copy">
                     <div class="sjinfo-right-title-right-img"
-                      :class="item.wdpj == 'good' ? 'sjinfo-right-title-right-img-active' : ''"
-                      @click="xzcp(item,'good')" style="margin-top: 5px;">
+                         :class="item.wdpj == 'good' ? 'sjinfo-right-title-right-img-active' : ''"
+                         @click="xzcp(item,'good')" style="margin-top: 5px;">
                       <img
-                        :src="item.wdpj == 'good' ? require('../img/haoping-active.png') : require('../img/haoping.png')"
-                        alt="" />
+                          :src="item.wdpj == 'good' ? require('../img/haoping-active.png') : require('../img/haoping.png')"
+                          alt=""/>
                     </div>
                     <el-popover placement="bottom-end" trigger="click" v-model="item.wdbadShow"
-                      v-show="item.wdpj == 'good' || item.wdpj == ''" @after-leave="xzcp(item,'bad')">
+                                v-show="item.wdpj == 'good' || item.wdpj == ''" @after-leave="xzcp(item,'bad')">
                       <div class="cp-box" style="width: 425px;">
                         <div style="margin-bottom: 10px;">
                           <el-checkbox-group v-model="item.wdbadpjinfo.badinfo" size="small">
@@ -131,26 +136,27 @@
                           </el-checkbox-group>
                         </div>
                         <el-input :disabled="!item.wdbadpjinfo.badinfo.includes('我要吐槽')" type="textarea"
-                          :autosize="{ minRows: 3, maxRows: 4}" placeholder="请输入评价内容"
-                          v-model="item.wdbadpjinfo.inputvalue">
+                                  :autosize="{ minRows: 3, maxRows: 4}" placeholder="请输入评价内容"
+                                  v-model="item.wdbadpjinfo.inputvalue">
                         </el-input>
                         <div style="display: flex;justify-content: flex-end;margin-top: 10px;">
                           <el-button type="primary" @click="item.wdbadShow = false">提交</el-button>
                         </div>
                       </div>
                       <div slot="reference" class="sjinfo-right-title-right-img"
-                        :class="shenjiaopj == 'bad' ? 'sjinfo-right-title-right-img-active' : ''"
-                        style="margin-top: 5px;">
-                        <img src="../img/chaping.png" alt="" />
+                           :class="shenjiaopj == 'bad' ? 'sjinfo-right-title-right-img-active' : ''"
+                           style="margin-top: 5px;">
+                        <img src="../img/chaping.png" alt=""/>
                       </div>
                     </el-popover>
                     <div class="sjinfo-right-title-right-img" v-show="item.wdpj == 'bad'"
-                      :class="item.wdpj == 'bad' ? 'sjinfo-right-title-right-img-active' : ''" @click="xzcp(item,'bad')"
-                      style="margin-top: 5px;">
-                      <img src="../img/chaping-active.png" alt="" />
+                         :class="item.wdpj == 'bad' ? 'sjinfo-right-title-right-img-active' : ''"
+                         @click="xzcp(item,'bad')"
+                         style="margin-top: 5px;">
+                      <img src="../img/chaping-active.png" alt=""/>
                     </div>
                     <div v-if="!item.showChart" class="dfcontent-bot" @click="copydf(index)">
-                      <img src="../img/copy.png" alt="" style="width: 21px;margin-right: 5px;" />
+                      <img src="../img/copy.png" alt="" style="width: 21px;margin-right: 5px;"/>
                     </div>
                   </div>
                 </div>
@@ -192,7 +198,7 @@
         </el-select> -->
         <div id="useTemplate" v-if="useTemplate"></div>
         <el-input v-else v-model="chatText" :disabled="chatLock" type="textarea" :autosize="{ minRows: 4, maxRows: 8}"
-        placeholder="请输入问题相关描述" @keydown.enter="sendChat()">
+                  placeholder="请输入问题相关描述" @keydown.enter="sendChat()">
         </el-input>
         <el-button icon="el-icon-plus" circle style="margin-left: 5px;" @click="openUpdate"></el-button>
         <el-button :disabled="chatLock" @click="sendChat()">发送</el-button>
@@ -213,1017 +219,1068 @@ import {getApiUrl} from "../../../utils";
 import Cookies from 'vue-cookies';
 
 export default {
-    mixins: [sseMixin],
-    data() {
+  mixins: [sseMixin],
+  data() {
+    return {
+      show:false,
+      chatText: undefined,
+      chatData: [],
+      chatLock: false,
+      useTemplate: false,
+      shenjiaopj: '',
+      // selectUrl: 'https://officechat.emic.edu.cn/glm/v2/chatdata?v=4&t=nj&q=',
+      // selectUrl: 'http://47.123.4.81:3389/glm/test?v=4&t=nj&q=',
+      // selectUrl: getApiUrl('/glm/v2/chatdata?v=4&t=nj&q='),
+      selectUrl: 'https://officechat.emic.edu.cn/v1/chat-messages',
+      dialogVisible: false,
+      image: '',
+      AIList: [],
+      contentBox: [
+        {
+          name: '写一则通知',
+          content: '你作为[单位/部门名称]的[具体职务]，起草一份关于[事项主题]的通知，需包含[具体要素1]、[具体要素2]、[具体要素3]，语言简洁无形容词，符合《党政机关公文格式》要求。',
+        },
+        {
+          name: '写一篇请示公文',
+          content: '以[单位名称]名义向[上级单位名称]提交关于[请示事项]的请示，需说明[背景原因]、[具体请求内容]、[解决方案建议]，结尾使用妥否，请批示规范用语。',
+        }, {
+          name: '写一个函',
+          content: '以[发函单位]名义致[收函单位]的商洽函，主题为[事项说明]，需明确[协作需求]、[时间节点]、[联系方式]，措辞礼貌得体，不加必须务必等强制性词汇',
+        },
+        {
+          name: '写一个讲话稿',
+          content: '撰写[职务+姓名]在[会议/活动名称]上的讲话稿，突出[3个核心观点]，融入[近期政策关键词]，引用[本地数据案例]，口语化表达但保持权威感，时长控制在20分钟内。'
+        },
+        {
+          name: '写一个心得体会',
+          content: '以[职务+姓名]身份撰写学习[政策文件/会议精神名称]的心得体会，结合[具体业务领域]实际，包含"[认识提升]-[差距分析]-[落实举措]"三部分，引用原文金句不超过3处，禁用空话套话，字数1200字左右。',
+        }, {
+          name: '写一个项目立项申请书',
+          content: '起草[项目名称]立项申请，结构含"[必要性]-[可行性]-[实施计划]-[效益分析]"，需引用[上位规划文件编号]，资金预算精确到万元，标注用地/环评等前置手续办理进度，附专家论证意见摘要。',
+        },
+      ],
+      // type: 'bar',
+      loading: false,
+
+      /**
+       * chat=正常对话 get_need_commend=需要分析获取分析结论
+       * @type {'' | 'chat' | 'get_need_commend'}
+       */
+      chatQueryType: '',
+      renderResponseInterval: null,
+      renderResponseInx: 0,
+    }
+  },
+  computed: {
+    latestChatResponse() {
+      const item = this.chatData[this.chatData.length - 1] || {};
       return {
-        chatText: undefined,
-        chatData: [],
-        chatLock: false,
-        useTemplate: false,
-        shenjiaopj: '',
-        // selectUrl: 'https://officechat.emic.edu.cn/glm/v2/chatdata?v=4&t=nj&q=',
-        // selectUrl: 'http://47.123.4.81:3389/glm/test?v=4&t=nj&q=',
-        // selectUrl: getApiUrl('/glm/v2/chatdata?v=4&t=nj&q='),
-        selectUrl: 'https://officechat.emic.edu.cn/v1/chat-messages',
-        dialogVisible: false,
-        image: '',
-        AIList: [],
-        contentBox: [
-          {
-            name: '写一则通知',
-            content: '你作为[单位/部门名称]的[具体职务]，起草一份关于[事项主题]的通知，需包含[具体要素1]、[具体要素2]、[具体要素3]，语言简洁无形容词，符合《党政机关公文格式》要求。',
-          },
-          {
-            name: '写一篇请示公文',
-            content:'以[单位名称]名义向[上级单位名称]提交关于[请示事项]的请示，需说明[背景原因]、[具体请求内容]、[解决方案建议]，结尾使用妥否，请批示规范用语。',
-          }, {
-            name: '写一个函',
-            content: '以[发函单位]名义致[收函单位]的商洽函，主题为[事项说明]，需明确[协作需求]、[时间节点]、[联系方式]，措辞礼貌得体，不加必须务必等强制性词汇',
-          },
-          {
-            name: '写一个讲话稿',
-            content: '撰写[职务+姓名]在[会议/活动名称]上的讲话稿，突出[3个核心观点]，融入[近期政策关键词]，引用[本地数据案例]，口语化表达但保持权威感，时长控制在20分钟内。'
-          },
-          {
-            name: '写一个心得体会',
-            content: '以[职务+姓名]身份撰写学习[政策文件/会议精神名称]的心得体会，结合[具体业务领域]实际，包含"[认识提升]-[差距分析]-[落实举措]"三部分，引用原文金句不超过3处，禁用空话套话，字数1200字左右。',
-          }, {
-            name: '写一个项目立项申请书',
-            content: '起草[项目名称]立项申请，结构含"[必要性]-[可行性]-[实施计划]-[效益分析]"，需引用[上位规划文件编号]，资金预算精确到万元，标注用地/环评等前置手续办理进度，附专家论证意见摘要。',
-          },
-        ],
-        // type: 'bar',
-        loading: false,
-
-        /**
-         * chat=正常对话 get_need_commend=需要分析获取分析结论
-         * @type {'' | 'chat' | 'get_need_commend'}
-         */
-        chatQueryType: '',
-        renderResponseInterval: null,
-        renderResponseInx: 0,
+        response: item.response || '',
+        response_status: item.response_status || '', // finish |  any other
       }
-    },
-    computed: {
-      latestChatResponse() {
-        const item = this.chatData[this.chatData.length - 1] || {};
-        return {
-          response: item.response || '',
-          response_status: item.response_status || '', // finish |  any other
-        }
-      }
-    },
-    watch: {
-      sseMessages: {
-        handler(val) {
-          this.renderSseMessage(val);
-        },
-        deep: true,
+    }
+  },
+  watch: {
+    sseMessages: {
+      handler(val) {
+        this.renderSseMessage(val);
       },
-      latestChatResponse: {
-        handler(val) {
-          if (this.renderResponseInterval) {
-            return;
+      deep: true,
+    },
+    latestChatResponse: {
+      handler(val) {
+
+        if (this.renderResponseInterval) {
+          return;
+        }
+        const item = this.chatData[this.chatData.length - 1];
+        // console.log("this.chatData[this.chatData.length - 1];",this.chatData[this.chatData.length - 1])
+        if (val.response) {
+
+          if (!item.responseText) {
+            this.renderResponseInx = 0;
           }
-          const item = this.chatData[this.chatData.length - 1];
-          console.log("this.chatData[this.chatData.length - 1];",this.chatData[this.chatData.length - 1])
-          if (val.response) {
-            if (!item.responseText) {
-              this.renderResponseInx = 0;
-            }
-            this.renderResponseInterval = setInterval(() => {
-              const item = this.chatData[this.chatData.length - 1];
-              if (this.renderResponseInx >= item.response.length) {
-                clearInterval(this.renderResponseInterval);
-                this.renderResponseInterval = null;
-                if (item.response_status === 'finish') {
-                  this.afterChatSuccess(item, this.sseMessages[this.sseMessages.length - 1]);
-                }
-              } else {
-                item.responseText = item.responseText + item.response[this.renderResponseInx];
-                item.responseMdText = this.getMarkdown().render(item.responseText);
-                // item.responseMdText = this.getMarkdown().myThinkRender(item.responseText);
-                this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item));
-                this.chatData = JSON.parse(JSON.stringify(this.chatData));
-                this.renderResponseInx++;
-                this.$nextTick(() => {
-                  document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
-                    .scrollHeight
-                })
+          this.renderResponseInterval = setInterval(() => {
+            const item = this.chatData[this.chatData.length - 1];
+            if (this.renderResponseInx >= item.response.length) {
+              clearInterval(this.renderResponseInterval);
+              this.renderResponseInterval = null;
+              if (item.response_status === 'finish') {
+                this.afterChatSuccess(item, this.sseMessages[this.sseMessages.length - 1]);
               }
-            }, 10)
-          }
-        },
-        deep: true,
-      },
-      sseError(val) {
-        // 如果sse有错误
-        if (!!val) {
-          const item = this.chatData[this.chatData.length - 1];
-          item.loading = false;
-          const response = '<span style="color: red;">系统异常，请稍后重试！</span>';
-          item.response = response;
-          item.responseText = response;
-          item.responseMdText = response;
-          item.loadings = false;
-          this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item));
-          this.chatData = JSON.parse(JSON.stringify(this.chatData));
-          this.chatLock = false;
-          this.$nextTick(() => {
-            document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
-              .scrollHeight
-          })
-        }
-      }
-    },
-    mounted() {
-    },
-    methods: {
-      getApiUrl,
-      getMarkdown() {
-        var md = new MarkdownIt({
-          html: true,
-          linkify: true,
-          typographer: true,
-        });
-        	// 添加规则
-          md.core.ruler.push('show-line', (state)=> {
-            // forEach 遍历 tokens
-            state.tokens.forEach(token => {
-                    // token.map 即所在的行数
-                    console.log('token', token)
-                    if (token.map) {
-                      // 起始行
-                        const start  = ["data-line-start", token.map[0].toString()]
-                        // 结束行
-                        const end  = ["data-line-end", token.map[1].toString()]
-                        // 初始化属性
-                        token.attrs = token.attrs || []
-                        // 添加属性
-                        token.attrs.push(start,end)
-                    }
-                })
-            return true;
-          });
- 
+            } else {
+              item.responseText = item.responseText + item.response[this.renderResponseInx];
 
-        // 禁用默认的列表解析器
-        // md.disable('list');
-        // 自定义表格渲染器
-        function myTableRender(tokens, idx, options, env, self) {
-          const token = tokens[idx];
-          console.log("token", token)
-          if (token.type === 'table_open') {
-            // 添加一个自定义的类到 table 标签
-            return '<table class="markdown-table">';
-          }
-          // 处理表格的其他部分，例如 th, td 等
-          // ...
-          // 表格结束标签
-          if (token.type === 'table_close') {
-            return '</table>';
-          }
-          // 默认行为
-          return self.renderToken(tokens, idx, options);
+              item.responseMdText = this.getMarkdown().render(item.responseText);
+              item.responseMdText = item.responseMdText.replace(/<think>/g, '<think id="think" class="tip"" >');
+              item.responseMdText = item.responseMdText.replace(/<\/think><\/p>/g, '</p></think>');
+              // item.responseMdText = this.getMarkdown().myThinkRender(item.responseText);
+              this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item));
+              this.chatData = JSON.parse(JSON.stringify(this.chatData));
+              this.renderResponseInx++;
+              this.$nextTick(() => {
+                document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
+                    .scrollHeight
+              })
+            }
+          }, 10)
         }
-        // 注册自定义渲染器
-        md.renderer.rules.table_open = myTableRender;
-        return md;
       },
-      renderEcharts(item, d) {
-        item.showChart = true
-        item.chartData = d
-        this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
+      deep: true,
+    },
+    sseError(val) {
+      // 如果sse有错误
+      if (!!val) {
+        const item = this.chatData[this.chatData.length - 1];
+        item.loading = false;
+        const response = '<span style="color: red;">系统异常，请稍后重试！</span>';
+        item.response = response;
+        item.responseText = response;
+        item.responseMdText = response;
+        item.loadings = false;
+        this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item));
         this.chatData = JSON.parse(JSON.stringify(this.chatData));
-
+        this.chatLock = false;
         this.$nextTick(() => {
           document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
-            .scrollHeight
-          if (!item.response) {
-            let cData = [...d];
-            if (typeof(cData[0].data) === 'string') {
-              cData[0].data = {
-                options: {
-                  showTitle: true,
-                  legend: {}
-                },
-                title: cData[0].data,
-              }
-            }
-            cData[0].data.options.legend.bottom = 0
-
-            if (cData[0].data.title === "高校在校生与gdp关系") {
-              cData[0].data.options.yAxis.axisLabel.formatter = function (value, index) {
-                return (value / 10000).toFixed(1) + "万元"
-              }
-            }
-
-            this.initChart(`chart${this.chatData.length - 1}`, cData[0].data.options)
-            // d[0].data.legend.bottom = 0
-            // d[1].data.legend.bottom = 0
-            // this.initChart(`chart${this.chatData.length -1}`, d[0].data)
-            // this.initCharts(`chart${this.chatData.length -1 +'0'}`, d[1].data)
+              .scrollHeight
+        })
+      }
+    }
+  },
+  mounted() {
+  },
+  methods: {
+    getApiUrl,
+    getMarkdown() {
+      var md = new MarkdownIt({
+        html: true,
+        linkify: true,
+        typographer: true,
+        breaks:true,
+      });
+      // 添加规则
+      md.core.ruler.push('show-line', (state) => {
+        // forEach 遍历 tokens
+        state.tokens.forEach(token => {
+          // token.map 即所在的行数
+          if (token.map) {
+            // 起始行
+            const start = ["data-line-start", token.map[0].toString()]
+            // 结束行
+            const end = ["data-line-end", token.map[1].toString()]
+            // 初始化属性
+            token.attrs = token.attrs || []
+            // 添加属性
+            token.attrs.push(start, end)
           }
         })
-      },
-      renderSseMessage(sseMessages) {
-        console.log('sseMessages:', sseMessages)
-        const d = JSON.parse(JSON.stringify(sseMessages));
-        let result = ''
-        for (let i = 0; i < sseMessages.length; i++) {
-          if (sseMessages[i].event === 'message') {
-            result += sseMessages[i].answer
-          }
-        }
-        console.log("Txtresult", result)
-        console.log("d", d)
-        if (!d.length) return
+        return true;
+      });
 
-        if (this.chatData.length > 0) {
-          console.log('this.chatData', this.chatData)
-          let item = this.chatData[this.chatData.length - 1];
-          item.loading = false;
-          const latestRes = d[d.length - 1];
-          let resType = '';
-          if (latestRes.event === 'message') {
-            resType = 'text'
-            item.response = result;
-            item.response_status = 'loading';
-            console.log("Txtresult", result)
-            // 会在watch-latestChatResponse里面渲染text，并执行afterChatSuccess
-            // if (latestRes.status === 'finish') {
-            //   // 手动结束sse
-            //   this.closeSSE();
-            // }
-          } else {
-            item.response = result;
-            item.response_status = 'loading';
+
+      // 禁用默认的列表解析器
+      // md.disable('list');
+      // 自定义表格渲染器
+      function myTableRender(tokens, idx, options, env, self) {
+        const token = tokens[idx];
+        console.log("token", token)
+        if (token.type === 'table_open') {
+          // 添加一个自定义的类到 table 标签
+          return '<table class="markdown-table">';
+        }
+        // 处理表格的其他部分，例如 th, td 等
+        // ...
+        // 表格结束标签
+        if (token.type === 'table_close') {
+          return '</table>';
+        }
+        // 默认行为
+        return self.renderToken(tokens, idx, options);
+      }
+
+      // 注册自定义渲染器
+      md.renderer.rules.table_open = myTableRender;
+      return md;
+    },
+    renderEcharts(item, d) {
+      item.showChart = true
+      item.chartData = d
+      this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
+      this.chatData = JSON.parse(JSON.stringify(this.chatData));
+
+      this.$nextTick(() => {
+        document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
+            .scrollHeight
+        if (!item.response) {
+          let cData = [...d];
+          if (typeof (cData[0].data) === 'string') {
+            cData[0].data = {
+              options: {
+                showTitle: true,
+                legend: {}
+              },
+              title: cData[0].data,
+            }
           }
-          if (latestRes.event === 'message_end') {
-            // 手动结束sse
-            this.closeSSE();
-            item.loadings = false;
-            item.response_status === 'finish';
-            this.chatComplete();
+          cData[0].data.options.legend.bottom = 0
+
+          if (cData[0].data.title === "高校在校生与gdp关系") {
+            cData[0].data.options.yAxis.axisLabel.formatter = function (value, index) {
+              return (value / 10000).toFixed(1) + "万元"
+            }
           }
-          this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
-          this.chatData = JSON.parse(JSON.stringify(this.chatData));
-          // if (resType === 'echarts') {
+
+          this.initChart(`chart${this.chatData.length - 1}`, cData[0].data.options)
+          // d[0].data.legend.bottom = 0
+          // d[1].data.legend.bottom = 0
+          // this.initChart(`chart${this.chatData.length -1}`, d[0].data)
+          // this.initCharts(`chart${this.chatData.length -1 +'0'}`, d[1].data)
+        }
+      })
+    },
+    renderSseMessage(sseMessages) {
+      // console.log('sseMessages:', sseMessages)
+      const d = JSON.parse(JSON.stringify(sseMessages));
+      let result = ''
+      for (let i = 0; i < sseMessages.length; i++) {
+        if (sseMessages[i].event === 'message') {
+          result += sseMessages[i].answer
+        }
+      }
+      // console.log("Txtresult1", result)
+      // console.log("d", d)
+      if (!d.length) return
+
+      if (this.chatData.length > 0) {
+        // console.log('this.chatData', this.chatData)
+        let item = this.chatData[this.chatData.length - 1];
+        item.loading = false;
+        const latestRes = d[d.length - 1];
+        let resType = '';
+        if (latestRes.event === 'message') {
+          resType = 'text'
+          item.response = result;
+          item.response_status = 'loading';
+          console.log("result", result)
+
+          // console.log("result", result)
+          // if (latestRes.status === 'finish') {
+          // 会在watch-latestChatResponse里面渲染text，并执行afterChatSuccess
+          // if (latestRes.status === 'finish') {
           //   // 手动结束sse
           //   this.closeSSE();
-          //   // 渲染表格
-          //   this.renderEcharts(item, latestRes);
-          //   this.afterChatSuccess(item, latestRes);
           // }
-        }
-      },
-      chatComplete() {
-        this.chatLock = false;
-        this.chatText = '';
-      },
-      async afterChatSuccess(item, d) {
-        try {
-          // 保存问题和答案
-          let params = new FormData()
-          params.append('question', item.query)
-          if (item.response === '') {
-            params.append('answer', JSON.stringify(d))
-          } else {
-            params.append('answer', item.response)
-          }
-          await this.fetchWithTimeout(getApiUrl('/education/insertDataQuestionAndAnswer'), {
-            method: 'PUT',
-            body: params,
-          }).then(function (data) {
-            return data.text()
-          }).then(function (data) {
-            var res = JSON.parse(data)
-            item.QuestionAndAnswer = res.data
-          })
-        } catch (_e) {}
 
-        item.copy = true
-        this.chatText = null
-
-        this.chatLock = false
-
-        if (this.chatQueryType !== 'get_need_commend') {
-          item.loadings = true
-          try {
-            const recommend = await fetch(getApiUrl('/question_recommendation'), {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json;charset=UTF-8;',
-              },
-              body: JSON.stringify({
-                text: item.query,
-                uid: ''
-              })
-            }).then(response => response.json())
-            if (recommend) item.AIList = recommend.response;
-            item.loadings = false
-          } catch (_e) {
-            item.loadings = false
-          }
+        } else if (latestRes.event === "node_started") {
+          // console.log("result", result)
         } else {
-          this.chatQueryType = '';
+          item.response = result;
+          item.response_status = 'loading';
         }
-      },
-      handleRadioChange(type, item) {
-        item.chartData[0].data.legend.bottom = 0
-        item.chartData[1].data.legend.bottom = 0
-        if (type === 'bar') {
-          this.$nextTick(() => {
-            this.initChart(`chart${this.chatData.length -1}`, item.chartData[0].data)
-          })
-        } else if (type === 'line') {
-          this.$nextTick(() => {
-            this.initCharts(`chart${this.chatData.length -1 +'0'}`, item.chartData[1].data)
-          })
+        if (latestRes.event === 'message_end') {
+
+          // 手动结束sse
+          this.closeSSE();
+          item.loadings = false;
+          item.response_status === 'finish';
+          // console.log("result", result)
+          this.chatComplete();
         }
-      },
-      timeout(ms) {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            reject(new Error("请求超时"))
-          }, ms);
-        });
-      },
-      /**
-       * @param resource 请求url
-       * @param options 请求参数 同时可手动传入超时时间timeout，不出如timeout就是默认5秒超时
-       * @return {Promise<any>}
-       */
-      async fetchWithTimeout(resource, options) {
-        const {
-          timeout = 50000
-        } = options;
+        this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
+        this.chatData = JSON.parse(JSON.stringify(this.chatData));
+        console.log('chatData', this.chatData)
 
-        const controller = new AbortController();
-        const id = setTimeout(() => controller.abort(), timeout);
-
-        const response = await Promise.race([
-          fetch(resource, {
-            ...options,
-            signal: controller.signal
-          }),
-          this.timeout(timeout)
-        ]);
-
-        clearTimeout(id);
-
-        return response;
-      },
-      /**
-       * @param src 传入图片地址，可打开图片
-       * */
-      showImg(src) {
-        this.dialogVisible = true
-        this.image = src
-        this.$nextTick(() => {
-          var scale = 0.5
-          var img = document.getElementById('imgScale');
-          var isDraggable = false;
-          var startX, startY, imgX, imgY;
-          img.onwheel = function (event) {
-            event.preventDefault();
-            // 计算缩放比例，deltaY < 0 表示向上滚动，也就是放大图片；反之则缩小图片
-            scale += event.deltaY < 0 ? 0.1 : -0.1;
-            // 限制缩放比例在0.1到2之间
-            scale = Math.min(2, Math.max(0.3, scale));
-            if (Number(img.style.top.replace('px', '')) > (document.getElementById('imgScaleBox').clientHeight *
-                scale * 0.5)) {
-              img.style.top = (document.getElementById('imgScaleBox').clientHeight * scale * 0.5) + 'px'
-            } else if (Math.abs(Number(img.style.top.replace('px', ''))) > (document.getElementById('imgScaleBox')
-                .clientHeight * scale * 0.5)) {
-              img.style.top = (document.getElementById('imgScaleBox').clientHeight * scale * -0.5) + 'px'
-            }
-            // 更新图片的缩放级别
-            img.style.transform = 'scale(' + scale + ')';
-          };
-          img.onmousedown = function (event) {
-            isDraggable = true;
-            event.preventDefault()
-            // 记录鼠标按下的坐标和图片的位置
-            startX = event.clientX;
-            startY = event.clientY;
-            imgX = img.offsetLeft;
-            imgY = img.offsetTop;
-          };
-          img.onmousemove = function (event) {
-            if (isDraggable) {
-              event.preventDefault()
-              // 计算鼠标移动的距离
-              var dx = event.clientX - startX;
-              var dy = event.clientY - startY;
-
-              // 更新图片的位置
-              img.style.left = imgX + dx + 'px';
-              img.style.top = imgY + dy + 'px';
-            }
-          };
-          img.onmouseup = function () {
-            isDraggable = false;
-          };
-          img.addEventListener("click", function (event) {
-            event.stopPropagation();
-          });
+        // if (resType === 'echarts') {
+        //   // 手动结束sse
+        //   this.closeSSE();
+        //   // 渲染表格
+        //   this.renderEcharts(item, latestRes);
+        //   this.afterChatSuccess(item, latestRes);
+        // }
+      }
+    },
+    chatComplete() {
+      this.chatLock = false;
+      this.chatText = '';
+    },
+    async afterChatSuccess(item, d) {
+      try {
+        // 保存问题和答案
+        let params = new FormData()
+        params.append('question', item.query)
+        if (item.response === '') {
+          params.append('answer', JSON.stringify(d))
+        } else {
+          params.append('answer', item.response)
+        }
+        await this.fetchWithTimeout(getApiUrl('/education/insertDataQuestionAndAnswer'), {
+          method: 'PUT',
+          body: params,
+        }).then(function (data) {
+          return data.text()
+        }).then(function (data) {
+          var res = JSON.parse(data)
+          item.QuestionAndAnswer = res.data
         })
-      },
-      initChart(elId, option) {
-        if (echarts.getInstanceByDom(document.getElementById(elId))) {
-          echarts.dispose(document.getElementById(elId));
+      } catch (_e) {
+      }
+
+      item.copy = true
+      this.chatText = null
+
+      this.chatLock = false
+
+      if (this.chatQueryType !== 'get_need_commend') {
+        item.loadings = true
+        try {
+          const recommend = await fetch(getApiUrl('/question_recommendation'), {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=UTF-8;',
+            },
+            body: JSON.stringify({
+              text: item.query,
+              uid: ''
+            })
+          }).then(response => response.json())
+          if (recommend) item.AIList = recommend.response;
+          item.loadings = false
+        } catch (_e) {
+          item.loadings = false
         }
-        var myChart = echarts.init(document.getElementById(elId));
-        echarts.registerTransform(ecStat.transform.regression);
-        myChart.setOption(option);
-      },
-      initCharts(elId, option) {
-        if (echarts.getInstanceByDom(document.getElementById(elId))) {
-          echarts.dispose(document.getElementById(elId));
-        }
-        var myChart = echarts.init(document.getElementById(elId));
-        myChart.setOption(option);
-      },
-      // 时间戳转时间
-      timestampToTime(timestamp) {
-        // 时间戳为10位需*1000，时间戳为13位不需乘1000
-        var date = new Date(timestamp);
-        var Y = date.getFullYear() + "-";
-        var M =
+      } else {
+        this.chatQueryType = '';
+      }
+    },
+    handleRadioChange(type, item) {
+      item.chartData[0].data.legend.bottom = 0
+      item.chartData[1].data.legend.bottom = 0
+      if (type === 'bar') {
+        this.$nextTick(() => {
+          this.initChart(`chart${this.chatData.length - 1}`, item.chartData[0].data)
+        })
+      } else if (type === 'line') {
+        this.$nextTick(() => {
+          this.initCharts(`chart${this.chatData.length - 1 + '0'}`, item.chartData[1].data)
+        })
+      }
+    },
+    timeout(ms) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error("请求超时"))
+        }, ms);
+      });
+    },
+    /**
+     * @param resource 请求url
+     * @param options 请求参数 同时可手动传入超时时间timeout，不出如timeout就是默认5秒超时
+     * @return {Promise<any>}
+     */
+    async fetchWithTimeout(resource, options) {
+      const {
+        timeout = 50000
+      } = options;
+
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+
+      const response = await Promise.race([
+        fetch(resource, {
+          ...options,
+          signal: controller.signal
+        }),
+        this.timeout(timeout)
+      ]);
+
+      clearTimeout(id);
+
+      return response;
+    },
+    /**
+     * @param src 传入图片地址，可打开图片
+     * */
+    showImg(src) {
+      this.dialogVisible = true
+      this.image = src
+      this.$nextTick(() => {
+        var scale = 0.5
+        var img = document.getElementById('imgScale');
+        var isDraggable = false;
+        var startX, startY, imgX, imgY;
+        img.onwheel = function (event) {
+          event.preventDefault();
+          // 计算缩放比例，deltaY < 0 表示向上滚动，也就是放大图片；反之则缩小图片
+          scale += event.deltaY < 0 ? 0.1 : -0.1;
+          // 限制缩放比例在0.1到2之间
+          scale = Math.min(2, Math.max(0.3, scale));
+          if (Number(img.style.top.replace('px', '')) > (document.getElementById('imgScaleBox').clientHeight *
+              scale * 0.5)) {
+            img.style.top = (document.getElementById('imgScaleBox').clientHeight * scale * 0.5) + 'px'
+          } else if (Math.abs(Number(img.style.top.replace('px', ''))) > (document.getElementById('imgScaleBox')
+              .clientHeight * scale * 0.5)) {
+            img.style.top = (document.getElementById('imgScaleBox').clientHeight * scale * -0.5) + 'px'
+          }
+          // 更新图片的缩放级别
+          img.style.transform = 'scale(' + scale + ')';
+        };
+        img.onmousedown = function (event) {
+          isDraggable = true;
+          event.preventDefault()
+          // 记录鼠标按下的坐标和图片的位置
+          startX = event.clientX;
+          startY = event.clientY;
+          imgX = img.offsetLeft;
+          imgY = img.offsetTop;
+        };
+        img.onmousemove = function (event) {
+          if (isDraggable) {
+            event.preventDefault()
+            // 计算鼠标移动的距离
+            var dx = event.clientX - startX;
+            var dy = event.clientY - startY;
+
+            // 更新图片的位置
+            img.style.left = imgX + dx + 'px';
+            img.style.top = imgY + dy + 'px';
+          }
+        };
+        img.onmouseup = function () {
+          isDraggable = false;
+        };
+        img.addEventListener("click", function (event) {
+          event.stopPropagation();
+        });
+      })
+    },
+    initChart(elId, option) {
+      if (echarts.getInstanceByDom(document.getElementById(elId))) {
+        echarts.dispose(document.getElementById(elId));
+      }
+      var myChart = echarts.init(document.getElementById(elId));
+      echarts.registerTransform(ecStat.transform.regression);
+      myChart.setOption(option);
+    },
+    initCharts(elId, option) {
+      if (echarts.getInstanceByDom(document.getElementById(elId))) {
+        echarts.dispose(document.getElementById(elId));
+      }
+      var myChart = echarts.init(document.getElementById(elId));
+      myChart.setOption(option);
+    },
+    // 时间戳转时间
+    timestampToTime(timestamp) {
+      // 时间戳为10位需*1000，时间戳为13位不需乘1000
+      var date = new Date(timestamp);
+      var Y = date.getFullYear() + "-";
+      var M =
           (date.getMonth() + 1 < 10 ?
-            "0" + (date.getMonth() + 1) :
-            date.getMonth() + 1) + "-";
-        var D = (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + " ";
-        var h = (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) + ":";
-        var m = (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + ":";
-        var s = (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds());
-        return Y + M + D + h + m + s;
-      },
-      // 点击历史提问记录
-      clickChatText(query) {
-        var that = this
-        const box1 = document.getElementsByClassName('chat')[0]
-        const box = document.getElementsByClassName('chat')[0].getElementsByClassName('my-query')
-        if (box && box.length) {
-          for (var i = 0; i < box.length; i++) {
-            console.log(box[i].innerText, query)
-            if (box[i].innerText == query) {
-              console.log(box[i].offsetTop)
-              box[i].scrollIntoView(true)
-              break;
-            }
+              "0" + (date.getMonth() + 1) :
+              date.getMonth() + 1) + "-";
+      var D = (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + " ";
+      var h = (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) + ":";
+      var m = (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + ":";
+      var s = (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds());
+      return Y + M + D + h + m + s;
+    },
+    // 点击历史提问记录
+    clickChatText(query) {
+      var that = this
+      const box1 = document.getElementsByClassName('chat')[0]
+      const box = document.getElementsByClassName('chat')[0].getElementsByClassName('my-query')
+      if (box && box.length) {
+        for (var i = 0; i < box.length; i++) {
+          console.log(box[i].innerText, query)
+          if (box[i].innerText == query) {
+            console.log(box[i].offsetTop)
+            box[i].scrollIntoView(true)
+            break;
           }
         }
-      },
-      async sendChat(chatText) {
-        if (this.chatText === undefined || this.chatText === '' || this.chatText === null) return;
-        const that = this
-        let value
-        if (this.useTemplate) {
-          let useTemplateEl = document.getElementById('useTemplate')
-          let text = ""
-          Array.from(useTemplateEl.childNodes).forEach(node => {
-            if (node.nodeType === Node.TEXT_NODE) {
-              // 如果是文本节点
-              text += node.textContent
-            } else if (node.nodeType === Node.ELEMENT_NODE) {
-              // 如果是元素节点
-              if (node.tagName === 'INPUT') {
-                // 如果是input元素
-                text += node.value
-              } else {
-                // 对于其他元素，获取内部文字
-                text += node.innerText
-              }
+      }
+    },
+    async sendChat(chatText) {
+      if (this.chatText === undefined || this.chatText === '' || this.chatText === null) return;
+      const that = this
+      let value
+      if (this.useTemplate) {
+        let useTemplateEl = document.getElementById('useTemplate')
+        let text = ""
+        Array.from(useTemplateEl.childNodes).forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE) {
+            // 如果是文本节点
+            text += node.textContent
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            // 如果是元素节点
+            if (node.tagName === 'INPUT') {
+              // 如果是input元素
+              text += node.value
+            } else {
+              // 对于其他元素，获取内部文字
+              text += node.innerText
             }
-          });
-          value = text
-        } else {
-          value = chatText ? chatText : this.chatText
-        }
-        if (this.chatLock) {
-          return
-        }
-        let item = {
-          query: value,
-          loading: true,
-          loadings: true,
-          time: new Date().getTime(),
-          QuestionAndAnswer: {},
-          wdbadShow: false,
-          wdpj: '',
-          wdpjinfo: {},
-          showChart: false,
-          wdbadpjinfo: {
-            inputvalue: '',
-            badinfo: [],
+          }
+        });
+        value = text
+      } else {
+        value = chatText ? chatText : this.chatText
+      }
+      if (this.chatLock) {
+        return
+      }
+      let item = {
+        query: value,
+        loading: true,
+        loadings: true,
+        time: new Date().getTime(),
+        QuestionAndAnswer: {},
+        wdbadShow: false,
+        wdpj: '',
+        wdpjinfo: {},
+        showChart: false,
+        wdbadpjinfo: {
+          inputvalue: '',
+          badinfo: [],
+        },
+        AIList: [],
+        type: 'bar',
+        responseText: '',
+        responseMdText: '',
+        response_status: '',
+      }
+      this.chatData.push(item)
+      this.$nextTick(() => {
+        document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
+            .scrollHeight
+      })
+      this.useTemplate = false
+
+      let d
+      try {
+        // sse请求
+        this.chatLock = true;
+        this.initSSE(this.selectUrl, {
+          'query': value,
+          'user': Cookies.get('user_id'),
+          "inputs": {
+            'user_id': Cookies.get('user_id'),
           },
-          AIList: [],
-          type: 'bar',
-          responseText: '',
-          responseMdText: '',
-          response_status: '',
-        }
-        this.chatData.push(item)
+          "response_mode": "streaming",
+          "conversation_id": "",
+        });
+
+        /*// 如果需要进行超时就在调用这个方法，fetchWithTimeout
+        d = await this.fetchWithTimeout(this.selectUrl + value, {
+          method: 'POST',
+          timeout: 150000
+        })
+        d = await d.json()
+        console.log(d)*/
+      } catch (error) {
+        console.error("超时错误：", error);
+        item.loading = false
         this.$nextTick(() => {
           document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
-            .scrollHeight
-        })
-        this.useTemplate = false
-
-        let d
-        try {
-          // sse请求
-          this.chatLock = true;
-          this.initSSE(this.selectUrl,{
-            'query': value,
-            'user': Cookies.get('user_id'),
-            "inputs": {
-              'user_id': Cookies.get('user_id'),
-            },
-            "response_mode": "streaming",
-            "conversation_id": "",
-          });
-
-          /*// 如果需要进行超时就在调用这个方法，fetchWithTimeout
-          d = await this.fetchWithTimeout(this.selectUrl + value, {
-            method: 'POST',
-            timeout: 150000
-          })
-          d = await d.json()
-          console.log(d)*/
-        } catch (error) {
-          console.error("超时错误：", error);
-          item.loading = false
-          this.$nextTick(() => {
-            document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
               .scrollHeight
           })
           return
         }
         return;
 
-        // fetch(`http://10.40.241.6:17862/glm/v2/recommend?q=${this.chatText}`, {
-        //   method: 'POST'
-        // }).then(function (data) {
-        //     return data.text()
-        // }).then(function (data) {
-        //   var res = JSON.parse(data)
-        //   item.AIList = res
-        //   item.loadings = false
-        // })
-        /*var md = new MarkdownIt({
-          html: true,
-          linkify: true,
-          typographer: true,
-        });
-        // 禁用默认的列表解析器
-        md.disable('list');
-        // 自定义表格渲染器
-        function myTableRender(tokens, idx, options, env, self) {
-          const token = tokens[idx];
+      // fetch(`http://10.40.241.6:17862/glm/v2/recommend?q=${this.chatText}`, {
+      //   method: 'POST'
+      // }).then(function (data) {
+      //     return data.text()
+      // }).then(function (data) {
+      //   var res = JSON.parse(data)
+      //   item.AIList = res
+      //   item.loadings = false
+      // })
+      /*var md = new MarkdownIt({
+        html: true,
+        linkify: true,
+        typographer: true,
+      });
+      // 禁用默认的列表解析器
+      md.disable('list');
+      // 自定义表格渲染器
+      function myTableRender(tokens, idx, options, env, self) {
+        const token = tokens[idx];
 
-          // 检查 token 是否是表格
-          if (token.type === 'table_open') {
-            // 添加一个自定义的类到 table 标签
-            return '<table class="markdown-table">';
-          }
-
-          // 处理表格的其他部分，例如 th, td 等
-          // ...
-
-          // 表格结束标签
-          if (token.type === 'table_close') {
-            return '</table>';
-          }
-
-          // 默认行为
-          return self.renderToken(tokens, idx, options);
+        // 检查 token 是否是表格
+        if (token.type === 'table_open') {
+          // 添加一个自定义的类到 table 标签
+          return '<table class="markdown-table">';
         }
 
-        // 注册自定义渲染器
-        md.renderer.rules.table_open = myTableRender;
-        // item.response = md.render(d.choices && d.choices.length > 0 ? d.choices[0].message.content : '')
-        const aaa  = md.render(d.choices && d.choices.length > 0 ? d.choices[0].message.content : '')
-        // const styledHtml = aaa.replace('<table>', '<table class="markdown-table">');
-          // item.response = styledHtml
-          item.response = aaa*/
+        // 处理表格的其他部分，例如 th, td 等
+        // ...
 
-        // const d = await (await fetch("http://47.123.4.81:3389/glm/chatdata?q=" + value, { method: 'POST' })).json()
-        // item.response = d.choices && d.choices.length > 0 ? d.choices[0].message.content : ''
-        // 保存问题和答案
-        /*let params = new FormData()
-        params.append('question', value)
+        // 表格结束标签
+        if (token.type === 'table_close') {
+          return '</table>';
+        }
+
+        // 默认行为
+        return self.renderToken(tokens, idx, options);
+      }
+
+      // 注册自定义渲染器
+      md.renderer.rules.table_open = myTableRender;
+      // item.response = md.render(d.choices && d.choices.length > 0 ? d.choices[0].message.content : '')
+      const aaa  = md.render(d.choices && d.choices.length > 0 ? d.choices[0].message.content : '')
+      // const styledHtml = aaa.replace('<table>', '<table class="markdown-table">');
+        // item.response = styledHtml
+        item.response = aaa*/
+
+      // const d = await (await fetch("http://47.123.4.81:3389/glm/chatdata?q=" + value, { method: 'POST' })).json()
+      // item.response = d.choices && d.choices.length > 0 ? d.choices[0].message.content : ''
+      // 保存问题和答案
+      /*let params = new FormData()
+      params.append('question', value)
+      if (item.response === '') {
+        params.append('answer', JSON.stringify(d))
+      } else {
+        params.append('answer', item.response)
+      }
+      const x = await (await fetch("https://officechat.emic.edu.cn/education/insertDataQuestionAndAnswer", {
+        method: 'PUT',
+        body: params,
+
+      }).then(function (data) {
+        return data.text()
+      }).then(function (data) {
+        var res = JSON.parse(data)
+        item.QuestionAndAnswer = res.data
+      }))
+      if (item.response === '') {
+        item.showChart = true
+        item.chartData = d
+      }
+      item.copy = true
+      item.loading = false
+      this.chatText = null
+      this.$nextTick(() => {
+        document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
+          .scrollHeight
         if (item.response === '') {
-          params.append('answer', JSON.stringify(d))
-        } else {
-          params.append('answer', item.response)
-        }
-        const x = await (await fetch("https://officechat.emic.edu.cn/education/insertDataQuestionAndAnswer", {
-          method: 'PUT',
-          body: params,
 
-        }).then(function (data) {
-          return data.text()
-        }).then(function (data) {
-          var res = JSON.parse(data)
-          item.QuestionAndAnswer = res.data
-        }))
-        if (item.response === '') {
-          item.showChart = true
-          item.chartData = d
-        }
-        item.copy = true
-        item.loading = false
-        this.chatText = null
-        this.$nextTick(() => {
-          document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
-            .scrollHeight
-          if (item.response === '') {
+          d[0].data.options.legend.bottom = 0
 
-            d[0].data.options.legend.bottom = 0
-
-            if (d[0].data.title === "高校在校生与gdp关系") {
-              d[0].data.options.yAxis.axisLabel.formatter = function(value, index) {return (value / 10000).toFixed(1) + "万元"}
-            }
-
-            this.initChart(`chart${this.chatData.length -1}`, d[0].data.options)
-            // d[0].data.legend.bottom = 0
-            // d[1].data.legend.bottom = 0
-            // this.initChart(`chart${this.chatData.length -1}`, d[0].data)
-            // this.initCharts(`chart${this.chatData.length -1 +'0'}`, d[1].data)
+          if (d[0].data.title === "高校在校生与gdp关系") {
+            d[0].data.options.yAxis.axisLabel.formatter = function(value, index) {return (value / 10000).toFixed(1) + "万元"}
           }
+
+          this.initChart(`chart${this.chatData.length -1}`, d[0].data.options)
+          // d[0].data.legend.bottom = 0
+          // d[1].data.legend.bottom = 0
+          // this.initChart(`chart${this.chatData.length -1}`, d[0].data)
+          // this.initCharts(`chart${this.chatData.length -1 +'0'}`, d[1].data)
+        }
+      })
+      item.loadings = true
+      const recommend = await fetch('https://officechat.emic.edu.cn/question_recommendation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8;',
+        },
+        body: JSON.stringify({
+          text: value,
+          uid: ''
         })
-        item.loadings = true
-        const recommend = await fetch('https://officechat.emic.edu.cn/question_recommendation', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=UTF-8;',
-          },
-          body: JSON.stringify({
-            text: value,
-            uid: ''
-          })
-        }).then(response => response.json())
-        if (recommend) item.AIList = recommend.response;item.loadings = false
+      }).then(response => response.json())
+      if (recommend) item.AIList = recommend.response;item.loadings = false
 
-        this.chatLock = false*/
-      },
-      // 获取结论
-      async handleNeedCommend(record) {
-        console.log(record);
-        let value = '数据解析：' + record.query
-        let item = {
-          query: value,
-          loading: true,
-          time: new Date().getTime(),
-          QuestionAndAnswer: {},
-          wdbadShow: false,
-          wdpj: '',
-          wdpjinfo: {},
-          showChart: false,
-          wdbadpjinfo: {
-            inputvalue: '',
-            badinfo: [],
-          },
-          responseText: '',
-          responseMdText: '',
-          response_status: '',
-        }
-        this.useTemplate = false
-        this.chatData.push(item)
-        this.$nextTick(() => {
-          document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
-            .scrollHeight
-        })
-
-        const timeout = (ms, promise) => {
-          return new Promise((resolve, reject) => {
-            setTimeout(() => {
-              reject(new Error("请求超时"))
-            }, ms)
-            promise.then(resolve, reject)
-          })
-        }
-        // 获取结论请求
-        /*const d = await (await fetch(getApiUrl('/glm/analyse'), {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;',
-          },
-          body: JSON.stringify({
-            data: record.chartData[record.chartData.length - 1].data,
-          })
-        })).json()*/
-        // sse 获取结论请求
-        this.chatQueryType = 'get_need_commend';
-        this.initSSE(getApiUrl('/glm/analyse'), {data: record.chartData[record.chartData.length - 1].data})
-
-        /*var md = new MarkdownIt({
-          html: true,
-          linkify: true,
-          typographer: true,
-        });
-        // 禁用默认的列表解析器
-        md.disable('list');
-        // 自定义表格渲染器
-        function myTableRender(tokens, idx, options, env, self) {
-          const token = tokens[idx];
-          // 检查 token 是否是表格
-          if (token.type === 'table_open') {
-            // 添加一个自定义的类到 table 标签
-            return '<table class="markdown-table">';
-          }
-          // 处理表格的其他部分，例如 th, td 等
-          // ...
-          // 表格结束标签
-          if (token.type === 'table_close') {
-            return '</table>';
-          }
-          // 默认行为
-          return self.renderToken(tokens, idx, options);
-        }
-        // 注册自定义渲染器
-        md.renderer.rules.table_open = myTableRender;
-        item.response = md.render(d.choices && d.choices.length > 0 ? d.choices[0].message.content : '')
-        // 保存问题和答案
-        let params = new FormData()
-        params.append('question', value)
-        if (item.response === '') {
-          params.append('answer', JSON.stringify(d))
-        } else {
-          params.append('answer', item.response)
-        }
-        const x = await (await fetch("https://officechat.emic.edu.cn/education/insertDataQuestionAndAnswer", {
-          method: 'PUT',
-          body: params,
-
-        }).then(function (data) {
-          return data.text()
-        }).then(function (data) {
-          var res = JSON.parse(data)
-          item.QuestionAndAnswer = res.data
-        }))
-        item.copy = true
-        item.loading = false
-        this.chatText = null
-        this.$nextTick(() => {
-          document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
-            .scrollHeight
-        })
-        this.chatLock = false*/
-      },
-      // 点击差评按钮
-      xzcp(info, value) {
-        var that = this
-        console.log(info)
-        info.wdbadShow = false
-        if (info.wdpj == 'good') {
-          let data = new FormData()
-          data.append("id", info.wdpjinfo.id);
-          data.append("feedback", value);
-          if (info.wdbadpjinfo.badinfo.length > 0) {
-            var yuanyin = []
-            for (var i = 0; i < info.wdbadpjinfo.badinfo.length; i++) {
-              if (info.wdbadpjinfo.badinfo[i] != '我要吐槽') {
-                yuanyin.push(info.wdbadpjinfo.badinfo[i])
-              }
-            }
-            if (info.wdbadpjinfo.inputvalue) {
-              yuanyin.push(info.wdbadpjinfo.inputvalue)
-            }
-            data.append("badReason", yuanyin.join(';'))
-          }
-          fetch('https://officechat.emic.edu.cn/education/updateDataFeedback', {
-            // fetch('http://39.106.131.95:9002/education/updateWriteFeedback', {
-            method: 'POST',
-            body: data,
-          }).then(function (data) {
-            return data.text()
-          }).then(function (data) {
-            var res = JSON.parse(data)
-            info.wdpj = value
-            info.wdpjinfo = res.data
-          })
-        } else if (info.wdpj == 'bad') {
-          // var data = {
-          //  id: info.wdpjinfo.id,
-          // }
-          let data = new FormData()
-          data.append("id", info.wdpjinfo.id)
-          // fetch('http://39.106.131.95:9002/education/deleteWriteFeedback', {
-          fetch('https://officechat.emic.edu.cn/education/deleteDataFeedback', {
-            method: 'DELETE',
-            body: data,
-          }).then(function (data) {
-            return data.text()
-          }).then(function (data) {
-            info.wdpj = ''
-            info.wdpjinfo = {}
-          })
-        } else {
-          let data = new FormData()
-          data.append("questionId", info.QuestionAndAnswer.questionId)
-          data.append("answerId", info.QuestionAndAnswer.answerId)
-          data.append("feedback", value)
-          if (info.wdbadpjinfo.badinfo.length > 0) {
-            var yuanyin = []
-            for (var i = 0; i < info.wdbadpjinfo.badinfo.length; i++) {
-              if (info.wdbadpjinfo.badinfo[i] != '我要吐槽') {
-                yuanyin.push(info.wdbadpjinfo.badinfo[i])
-              }
-            }
-            if (info.wdbadpjinfo.inputvalue) {
-              yuanyin.push(info.wdbadpjinfo.inputvalue)
-            }
-            data.append("badReason", yuanyin.join(';'))
-          }
-          fetch('https://officechat.emic.edu.cn/education/insertDataFeedback', {
-            // fetch('http://39.106.131.95:9002/education/insertWriteFeedback', {
-            method: 'PUT',
-            body: data,
-          }).then(function (data) {
-            return data.text()
-          }).then(function (data) {
-            var res = JSON.parse(data)
-            info.wdpj = value
-            info.wdpjinfo = res.data
-          })
-        }
-        info.wdbadpjinfo = {
+      this.chatLock = false*/
+    },
+    // 获取结论
+    async handleNeedCommend(record) {
+      console.log(record);
+      let value = '数据解析：' + record.query
+      let item = {
+        query: value,
+        loading: true,
+        time: new Date().getTime(),
+        QuestionAndAnswer: {},
+        wdbadShow: false,
+        wdpj: '',
+        wdpjinfo: {},
+        showChart: false,
+        wdbadpjinfo: {
           inputvalue: '',
           badinfo: [],
-        }
-        info.wdbadShow = false
-      },
-      copydf(e) {
-        const input = document.createElement('textarea') // 创建input对象
-        const link = document.querySelector('.content-df' + e) // 获取需要复制文字的容器
-        input.value = link.innerText // 设置复制内容
-        document.body.appendChild(input) // 添加临时实例
-        input.select() // 选择实例内容
-        document.execCommand('Copy') // 执行复制
-        document.body.removeChild(input) // 删除临时实例
-        this.$message({
-          message: '复制成功',
-          type: 'success'
-        });
-      },
-      copyTemplate(text) {
-        this.useTemplate = false
-        this.chatText = text
-        // this.$nextTick(() => {
-        //  const useTemplateEl = document.getElementById('useTemplate')
-        //  useTemplateEl.innerHTML = ''
-        //  let arrayText = text.split(/\[([^\]]*)\]/g);
-        //  let result = [];
-        //  for(let i=0; i<arrayText.length; i++){
-        //    if(arrayText[i] !== ""){
-        //      result.push(arrayText[i]);
-        //    }
-        //  }
-        //  console.log(result, arrayText);
-        //  if(text.indexOf("[") === 0) {
-        //    result.forEach((item, i) => {
-        //      const index = i + 1
-        //      if(index%2 === 0) {
-        //        const span = document.createElement('span')
-        //        span.setAttribute('style', 'display: inline-block;')
-        //        span.innerText = item;
-        //        useTemplateEl.appendChild(span)
-        //      } else {
-        //        const input = document.createElement('input') // 创建input对象
-        //        // 设置input的属性
-        //        input.setAttribute('class', 'can-edit')
-        //        input.value = item
-        //        input.style.width = (input.value.length * 16 + 10) + 'px'
-        //        useTemplateEl.appendChild(input)
-        //      }
-        //    })
-        //  } else if(text.indexOf("[") > 0) {
-        //    result.forEach((item, i) => {
-        //      const index = i + 1
-        //      if(index%2 === 0) {
-        //        const input = document.createElement('input') // 创建input对象
-        //        // 设置input的属性
-        //        input.setAttribute('class', 'can-edit')
-        //        input.value = item
-        //        input.style.width = (input.value.length * 16 + 10) + 'px'
-        //        useTemplateEl.appendChild(input)
-        //      } else {
-        //        const span = document.createElement('span')
-        //        span.setAttribute('style', 'display: inline-block;')
-        //        span.innerText = item;
-        //        useTemplateEl.appendChild(span)
-        //      }
-        //    })
-        //  }
-        // })
+        },
+        responseText: '',
+        responseMdText: '',
+        response_status: '',
+      }
+      this.useTemplate = false
+      this.chatData.push(item)
+      this.$nextTick(() => {
+        document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
+            .scrollHeight
+      })
 
-      },
-      copyQuestionTemplate(item) {
-        if (item.url) {
-          window.open(item.url,'_blank')
-        } else {
-          this.useTemplate = false
-          this.chatText = item.content
+      const timeout = (ms, promise) => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            reject(new Error("请求超时"))
+          }, ms)
+          promise.then(resolve, reject)
+        })
+      }
+      // 获取结论请求
+      /*const d = await (await fetch(getApiUrl('/glm/analyse'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;',
+        },
+        body: JSON.stringify({
+          data: record.chartData[record.chartData.length - 1].data,
+        })
+      })).json()*/
+      // sse 获取结论请求
+      this.chatQueryType = 'get_need_commend';
+      this.initSSE(getApiUrl('/glm/analyse'), {data: record.chartData[record.chartData.length - 1].data})
+
+      /*var md = new MarkdownIt({
+        html: true,
+        linkify: true,
+        typographer: true,
+      });
+      // 禁用默认的列表解析器
+      md.disable('list');
+      // 自定义表格渲染器
+      function myTableRender(tokens, idx, options, env, self) {
+        const token = tokens[idx];
+        // 检查 token 是否是表格
+        if (token.type === 'table_open') {
+          // 添加一个自定义的类到 table 标签
+          return '<table class="markdown-table">';
         }
-      },
-      openUpdate() {
-        this.$parent.updateDialog();
-      },
+        // 处理表格的其他部分，例如 th, td 等
+        // ...
+        // 表格结束标签
+        if (token.type === 'table_close') {
+          return '</table>';
+        }
+        // 默认行为
+        return self.renderToken(tokens, idx, options);
+      }
+      // 注册自定义渲染器
+      md.renderer.rules.table_open = myTableRender;
+      item.response = md.render(d.choices && d.choices.length > 0 ? d.choices[0].message.content : '')
+      // 保存问题和答案
+      let params = new FormData()
+      params.append('question', value)
+      if (item.response === '') {
+        params.append('answer', JSON.stringify(d))
+      } else {
+        params.append('answer', item.response)
+      }
+      const x = await (await fetch("https://officechat.emic.edu.cn/education/insertDataQuestionAndAnswer", {
+        method: 'PUT',
+        body: params,
+
+      }).then(function (data) {
+        return data.text()
+      }).then(function (data) {
+        var res = JSON.parse(data)
+        item.QuestionAndAnswer = res.data
+      }))
+      item.copy = true
+      item.loading = false
+      this.chatText = null
+      this.$nextTick(() => {
+        document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
+          .scrollHeight
+      })
+      this.chatLock = false*/
+    },
+    // 点击差评按钮
+    xzcp(info, value) {
+      var that = this
+      console.log(info)
+      info.wdbadShow = false
+      if (info.wdpj == 'good') {
+        let data = new FormData()
+        data.append("id", info.wdpjinfo.id);
+        data.append("feedback", value);
+        if (info.wdbadpjinfo.badinfo.length > 0) {
+          var yuanyin = []
+          for (var i = 0; i < info.wdbadpjinfo.badinfo.length; i++) {
+            if (info.wdbadpjinfo.badinfo[i] != '我要吐槽') {
+              yuanyin.push(info.wdbadpjinfo.badinfo[i])
+            }
+          }
+          if (info.wdbadpjinfo.inputvalue) {
+            yuanyin.push(info.wdbadpjinfo.inputvalue)
+          }
+          data.append("badReason", yuanyin.join(';'))
+        }
+        fetch('https://officechat.emic.edu.cn/education/updateDataFeedback', {
+          // fetch('http://39.106.131.95:9002/education/updateWriteFeedback', {
+          method: 'POST',
+          body: data,
+        }).then(function (data) {
+          return data.text()
+        }).then(function (data) {
+          var res = JSON.parse(data)
+          info.wdpj = value
+          info.wdpjinfo = res.data
+        })
+      } else if (info.wdpj == 'bad') {
+        // var data = {
+        //  id: info.wdpjinfo.id,
+        // }
+        let data = new FormData()
+        data.append("id", info.wdpjinfo.id)
+        // fetch('http://39.106.131.95:9002/education/deleteWriteFeedback', {
+        fetch('https://officechat.emic.edu.cn/education/deleteDataFeedback', {
+          method: 'DELETE',
+          body: data,
+        }).then(function (data) {
+          return data.text()
+        }).then(function (data) {
+          info.wdpj = ''
+          info.wdpjinfo = {}
+        })
+      } else {
+        let data = new FormData()
+        data.append("questionId", info.QuestionAndAnswer.questionId)
+        data.append("answerId", info.QuestionAndAnswer.answerId)
+        data.append("feedback", value)
+        if (info.wdbadpjinfo.badinfo.length > 0) {
+          var yuanyin = []
+          for (var i = 0; i < info.wdbadpjinfo.badinfo.length; i++) {
+            if (info.wdbadpjinfo.badinfo[i] != '我要吐槽') {
+              yuanyin.push(info.wdbadpjinfo.badinfo[i])
+            }
+          }
+          if (info.wdbadpjinfo.inputvalue) {
+            yuanyin.push(info.wdbadpjinfo.inputvalue)
+          }
+          data.append("badReason", yuanyin.join(';'))
+        }
+        fetch('https://officechat.emic.edu.cn/education/insertDataFeedback', {
+          // fetch('http://39.106.131.95:9002/education/insertWriteFeedback', {
+          method: 'PUT',
+          body: data,
+        }).then(function (data) {
+          return data.text()
+        }).then(function (data) {
+          var res = JSON.parse(data)
+          info.wdpj = value
+          info.wdpjinfo = res.data
+        })
+      }
+      info.wdbadpjinfo = {
+        inputvalue: '',
+        badinfo: [],
+      }
+      info.wdbadShow = false
+    },
+    copydf(e) {
+      const input = document.createElement('textarea') // 创建input对象
+      const link = document.querySelector('.content-df' + e) // 获取需要复制文字的容器
+      input.value = link.innerText // 设置复制内容
+      document.body.appendChild(input) // 添加临时实例
+      input.select() // 选择实例内容
+      document.execCommand('Copy') // 执行复制
+      document.body.removeChild(input) // 删除临时实例
+      this.$message({
+        message: '复制成功',
+        type: 'success'
+      });
+    },
+    copyTemplate(text) {
+      this.useTemplate = false
+      this.chatText = text
+      // this.$nextTick(() => {
+      //  const useTemplateEl = document.getElementById('useTemplate')
+      //  useTemplateEl.innerHTML = ''
+      //  let arrayText = text.split(/\[([^\]]*)\]/g);
+      //  let result = [];
+      //  for(let i=0; i<arrayText.length; i++){
+      //    if(arrayText[i] !== ""){
+      //      result.push(arrayText[i]);
+      //    }
+      //  }
+      //  console.log(result, arrayText);
+      //  if(text.indexOf("[") === 0) {
+      //    result.forEach((item, i) => {
+      //      const index = i + 1
+      //      if(index%2 === 0) {
+      //        const span = document.createElement('span')
+      //        span.setAttribute('style', 'display: inline-block;')
+      //        span.innerText = item;
+      //        useTemplateEl.appendChild(span)
+      //      } else {
+      //        const input = document.createElement('input') // 创建input对象
+      //        // 设置input的属性
+      //        input.setAttribute('class', 'can-edit')
+      //        input.value = item
+      //        input.style.width = (input.value.length * 16 + 10) + 'px'
+      //        useTemplateEl.appendChild(input)
+      //      }
+      //    })
+      //  } else if(text.indexOf("[") > 0) {
+      //    result.forEach((item, i) => {
+      //      const index = i + 1
+      //      if(index%2 === 0) {
+      //        const input = document.createElement('input') // 创建input对象
+      //        // 设置input的属性
+      //        input.setAttribute('class', 'can-edit')
+      //        input.value = item
+      //        input.style.width = (input.value.length * 16 + 10) + 'px'
+      //        useTemplateEl.appendChild(input)
+      //      } else {
+      //        const span = document.createElement('span')
+      //        span.setAttribute('style', 'display: inline-block;')
+      //        span.innerText = item;
+      //        useTemplateEl.appendChild(span)
+      //      }
+      //    })
+      //  }
+      // })
+
+    },
+    copyQuestionTemplate(item) {
+      if (item.url) {
+        window.open(item.url, '_blank')
+      } else {
+        this.useTemplate = false
+        this.chatText = item.content
+      }
+    },
+    openUpdate() {
+      this.$parent.updateDialog();
+    },
+    showAndHide() {
+      this.show = !this.show
+      if(this.show){
+        document.getElementById('think').className = 'collapsible tip'
+
+      }else{
+        document.getElementById('think').className = 'tip'
+      }
+
     }
   }
+}
 </script>
 <style>
-  @import '../css/search.css';
-  @import '../css/unpkg.com_element-ui@2.15.13_lib_theme-chalk_index.css';
-  #useTemplate {
-    width: 100%;
-    margin-right: 10px;
-    height: 44px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    line-height: 44px;
-    padding: 0 10px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-  }
+@import '../css/search.css';
+@import '../css/unpkg.com_element-ui@2.15.13_lib_theme-chalk_index.css';
+.collapsible {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* 限制行数为3行 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-  #useTemplate .can-edit {
-    display: inline-block;
-    width: 100%;
-    border: 0;
-    height: 30px;
-    background-color: #E5F9FE;
-  }
+.toggle{
+  float: right;
+  transform: rotate(0deg);
+}
+.toggleT{
+  transform: rotate(180deg);
+}
+.tip{
+  color: #C0C4CC;
+  font-size: 14px;
+}
+#useTemplate {
+  width: 100%;
+  margin-right: 10px;
+  height: 44px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  line-height: 44px;
+  padding: 0 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
 
-  #useTemplate .can-edit:focus-visible {
-    border: none;
-    outline: none;
-  }
+#useTemplate .can-edit {
+  display: inline-block;
+  width: 100%;
+  border: 0;
+  height: 30px;
+  background-color: #E5F9FE;
+}
 
-  .tip .tip_text {
-    color: #aaa;
-    font-size: 14px;
-  }
+#useTemplate .can-edit:focus-visible {
+  border: none;
+  outline: none;
+}
 
-  .select_url {
-    /* width: 100px; */
-    width: 108px;
-  }
+.tip .tip_text {
+  color: #aaa;
+  font-size: 14px;
+}
 
-  .select_url .el-input__inner {
-    /* width: 100px; */
-    width: 108px;
-  }
+.select_url {
+  /* width: 100px; */
+  width: 108px;
+}
 
-  #imgScaleBox {
-    /* 使用绝对定位实现垂直水平居中 */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 999;
-    cursor: move;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.1);
-  }
+.select_url .el-input__inner {
+  /* width: 100px; */
+  width: 108px;
+}
 
-  #imgScale {
-    position: relative;
-    z-index: 9999;
-    max-width: 1920px;
-    transform: scale(0.5)
-  }
+#imgScaleBox {
+  /* 使用绝对定位实现垂直水平居中 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  cursor: move;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+}
 
-  .flex-part {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .icon-img {
-    width: 35px;
-  }
-  .icon-font {
-    text-align:right;
-    font-size:12px;
-  }
-  .markdown-table {
-      width: 100%;
-      border-collapse: collapse;
-  }
-  .markdown-table th, .markdown-table td {
-      border: 1px solid #ddd; /* 灰色边框 */
-      text-align: left;
-      padding: 8px;
-  }
-  .markdown-table th {
-      background-color: #ecf3fc; /* 表格头部背景色 */
-  }
+#imgScale {
+  position: relative;
+  z-index: 9999;
+  max-width: 1920px;
+  transform: scale(0.5)
+}
+
+.flex-part {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon-img {
+  width: 35px;
+}
+
+.icon-font {
+  text-align: right;
+  font-size: 12px;
+}
+
+.markdown-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.markdown-table th, .markdown-table td {
+  border: 1px solid #ddd; /* 灰色边框 */
+  text-align: left;
+  padding: 8px;
+}
+
+.markdown-table th {
+  background-color: #ecf3fc; /* 表格头部背景色 */
+}
 </style>

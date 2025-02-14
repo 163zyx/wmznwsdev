@@ -191,7 +191,7 @@
       getTopSession() {
         let self = this
         let url = window.location.href
-        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=87529c75be13ac67cacf67936d9d738f';
+        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=d5d8e59997ca6a5b73993f290cd743b0';
         // console.log("url", url.split('=')[1]);
         let token = url.split('=')[1];
         fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {
@@ -229,7 +229,7 @@
           return data.text()
         }).then(function (data) {
           let res = JSON.parse(data)
-          console.log("datares",res)
+          // console.log("datares",res)
         }).catch(err => {
           console.log(err)
         })
@@ -240,7 +240,7 @@
       },
       // 点击顶部tab
       tabSelectedChange(val) {
-        console.log(val)
+        // console.log(val)
         if (this.tabSelected === val) {
           var iframe = document.getElementById('iframe'); // 获取iframe元素，'iframeId'是你的iframe的id
           this.searchUrl = 'https://officechat.emic.edu.cn/new-official/#/policyinquiry'
@@ -274,7 +274,7 @@
         that.uploading = true
         const formData = new FormData()
         formData.append('file', param.file) // 传入文件
-        console.log("formdata1", formData)
+        // console.log("formdata1", formData)
         // let url = "https://officechat.emic.edu.cn/smiling/knowledge/file/upload"
         // https://officechat.emic.edu.cn 正式
         // http://39.106.131.95:9002 测试

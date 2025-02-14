@@ -267,7 +267,7 @@
             return str.slice(0, -1)
         },
         sendChatOther() {
-            console.log(this.chatText)
+            // console.log(this.chatText)
             const params = {
                 query: this.chatText,
                 stream: true,
@@ -363,7 +363,7 @@
                           this.chatData[this.chatData.length -1].response = md.render(eventData.data.answer)
                           // console.log(containsBrackets(this.chatData[this.chatData.length -1].response))
                           if(containsBrackets(this.chatData[this.chatData.length -1].response)) {
-                              console.log(extractBrackets(this.chatData[this.chatData.length -1].response))
+                              // console.log(extractBrackets(this.chatData[this.chatData.length -1].response))
                               let textList = extractBrackets(this.chatData[this.chatData.length -1].response)
                               textList.forEach((item, index) => {
                                   // this.chatData[this.chatData.length -1].response = this.chatData[this.chatData.length -1].response.replace(textList[textList.length-1], `<span class="ref_link" id=${textList[textList.length-1].split("+")[1].slice(0, -1)}>${textList[textList.length-1].charAt(1)}</span>`)
@@ -392,7 +392,7 @@
                           this.chatData[this.chatData.length -1].response = text
                           this.chatData[this.chatData.length -1].contentNoEnd= false
                           sessionStorage.setItem('reference', JSON.stringify(this.chatData))
-                          console.log(text, this.chatData[this.chatData.length -1].response)
+                          // console.log(text, this.chatData[this.chatData.length -1].response)
                           this.$nextTick(() => {
                               var ref_links = document.querySelectorAll('.ref_link');
 
@@ -411,11 +411,11 @@
                           this.stopSSE()
                           this.eventSource.close()
                       }
-                      console.log(event,eventData);
+                      // console.log(event,eventData);
                   },
                   onerror: (error) => {
-                      console.log(error)
-                      console.log('SSE抛出异常onerror')
+                      // console.log(error)
+                      // console.log('SSE抛出异常onerror')
                       this.chatLock = false
                       this.chatData[this.chatData.length -1].loading = false
                       this.chatData[this.chatData.length -1].contentLoading = false
@@ -447,7 +447,7 @@
             this.chatData[this.chatData.length -1].showChart = false
             this.chatData[this.chatData.length -1].contentNoEnd= false
             if (this.abortController) {
-                console.log('SSE结束会话了')
+                // console.log('SSE结束会话了')
                 this.abortController.abort() // 结束会话
             }
         },
@@ -589,7 +589,7 @@
         const box = document.getElementsByClassName('chat')[0].getElementsByClassName('my-query')
         if (box && box.length) {
           for (var i = 0; i < box.length; i++) {
-            console.log(box[i].innerText, query)
+            // console.log(box[i].innerText, query)
             if (box[i].innerText == query) {
               console.log(box[i].offsetTop)
               box[i].scrollIntoView(true)
@@ -659,9 +659,9 @@
             timeout: 150000
           })
           d = await d.json()
-          console.log(d)
+          // console.log(d)
         } catch (error) {
-          console.error("超时错误：", error);
+          // console.error("超时错误：", error);
           item.loading = false
           this.$nextTick(() => {
             document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
