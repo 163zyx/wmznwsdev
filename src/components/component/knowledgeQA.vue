@@ -185,8 +185,8 @@
         </template>
       </div>
       <div class="knowledge-right-chattype">
-        <el-radio v-model="chatType" label="1" border style="margin-left: 20px;">资料库数据</el-radio>
-        <el-radio v-model="chatType" label="2" border>随便聊聊</el-radio>
+        <el-radio v-model="chatType" label="1" border style="margin-left: 20px;">知识库写作</el-radio>
+        <el-radio v-model="chatType" label="0" border>随便聊聊</el-radio>
       </div>
       <div class="knowledge-right-foot">
         <!-- <el-select class="select_url" :disabled="chatLock"  v-model="selectUrl" slot="prepend" placeholder="请选择">
@@ -766,6 +766,7 @@ export default {
           'user': Cookies.get('user_id'),
           "inputs": {
             'user_id': Cookies.get('user_id'),
+            'rag': this.chatType,
           },
           "response_mode": "streaming",
           "conversation_id": "",
