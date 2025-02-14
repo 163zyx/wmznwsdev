@@ -12,8 +12,8 @@
         </div>
       </div>
     </div>
-    <div class="xz-right">
-      <div class="xz-right-main chat">
+    <div class="knowledge-right">
+      <div class="knowledge-right-main chat">
         <div class="dfxx">
           <img src="../img/avatar.png" class="img" alt=""/>
           <div class="dfxx-right">
@@ -184,7 +184,11 @@
 
         </template>
       </div>
-      <div class="xz-right-foot">
+      <div class="knowledge-right-chattype">
+        <el-radio v-model="chatType" label="1" border style="margin-left: 20px;">资料库数据</el-radio>
+        <el-radio v-model="chatType" label="2" border>随便聊聊</el-radio>
+      </div>
+      <div class="knowledge-right-foot">
         <!-- <el-select class="select_url" :disabled="chatLock"  v-model="selectUrl" slot="prepend" placeholder="请选择">
           <el-option label="年鉴数据" :value="getApiUrl('/glm/v2/chatdata?v=4&t=nj&q=')"></el-option>
           <el-option label="知识库数据" value="http://10.20.13.207/v1/chat-messages"></el-option>
@@ -193,7 +197,7 @@
           <el-option label="Auto" value="http://10.40.241.6:17862/glm/v3/chat?q="></el-option>
         </el-select> -->
         <div id="useTemplate" v-if="useTemplate"></div>
-        <el-input v-else v-model="chatText" :disabled="chatLock" type="textarea" :autosize="{ minRows: 4, maxRows: 8}"
+        <el-input v-else v-model="chatText" :disabled="chatLock" type="textarea" :autosize="{ minRows: 3, maxRows: 5}"
                   placeholder="请输入问题相关描述" @keydown.enter="sendChat()">
         </el-input>
         <el-button icon="el-icon-plus" circle style="margin-left: 5px;" @click="openUpdate"></el-button>
@@ -265,6 +269,7 @@ export default {
       chatQueryType: '',
       renderResponseInterval: null,
       renderResponseInx: 0,
+      chatType: '1',
     }
   },
   computed: {

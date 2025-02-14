@@ -630,6 +630,14 @@ header {
   height: 100%;
   padding: 0 0 20px 0;
 }
+.knowledge-right {
+  display: flex;
+  width: 833px;
+  background-color: #FFFFFF;
+  height: 100%;
+  flex-direction: column;
+  padding-top: 20px;
+}
 
 .xz-right-main {
   width: 100%;
@@ -640,7 +648,6 @@ header {
 .knowledge-right-main {
   width: 100%;
   height: calc(100% - 44px);
-  padding-bottom: 20px;
   overflow: auto;
 }
 
@@ -756,6 +763,32 @@ header {
   align-items: center;
   padding-right: 20px;
   padding-left: 20px;
+}
+
+.knowledge-right-foot {
+  height: 110px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 20px;
+  padding-left: 20px;
+
+  button {
+    background: #F49922;
+    border-radius: 4px 4px 4px 4px;
+    opacity: 1;
+    border: none;
+    color: #FFFFFF;
+  }
+}
+
+.knowledge-right-chattype {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .xz-right-foot input {

@@ -76,11 +76,11 @@
             style="width: 100%"
             max-height="330"
             >
-            <el-table-column
+            <!-- <el-table-column
               prop="id"
               label="编号"
               width="100">
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
               prop="name"
               label="文件名"
