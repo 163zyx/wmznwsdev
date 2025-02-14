@@ -77,7 +77,7 @@
                      style="display: flex;flex-direction: column;align-items: flex-start;">
                   <div style="width: 100%;display: flex;flex-direction: row;justify-content: space-between;">
                     <div style="width: 100%">
-                      <div class="toggle" @click="showAndHide" :class="['toggle',show?'toggleT':'']">
+                      <div class="toggle" @click="showAndHide(index)" :class="['toggle',show&&index===showIndex?'toggleT':'']">
                         <svg t="1739439600007" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4171" width="32" height="32"><path d="M904 692c0 8.189-3.124 16.379-9.372 22.628-12.497 12.496-32.759 12.496-45.256 0L512 377.255 174.628 714.628c-12.497 12.496-32.758 12.496-45.255 0-12.497-12.498-12.497-32.758 0-45.256l360-360c12.497-12.496 32.758-12.496 45.255 0l360 360C900.876 675.621 904 683.811 904 692z" fill="#8a8a8a" p-id="4172"></path></svg>
                       </div>
                       <p v-if="item.showChart" style="font-size: 15px;line-height: 27px;"></p>
@@ -220,15 +220,10 @@ import Cookies from 'vue-cookies';
 
 export default {
   mixins: [sseMixin],
-  props: {
-    type: {
-      type: Number,
-      default: 5,
-    },
-  },
   data() {
     return {
       show:false,
+      showIndex:0,
       chatText: undefined,
       chatData: [],
       chatLock: false,
@@ -319,7 +314,7 @@ export default {
               item.responseText = item.responseText + item.response[this.renderResponseInx];
 
               item.responseMdText = this.getMarkdown().render(item.responseText);
-              item.responseMdText = item.responseMdText.replace(/<think>/g, '<think id="think" class="tip"" >');
+              item.responseMdText = item.responseMdText.replace(/<think>/g, '<think id="think-'+(this.chatData.length-1)+'" class="scroll tip"" >');
               item.responseMdText = item.responseMdText.replace(/<\/think><\/p>/g, '</p></think>');
               // item.responseMdText = this.getMarkdown().myThinkRender(item.responseText);
               this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item));
@@ -488,7 +483,12 @@ export default {
           item.response_status = 'loading';
         }
         if (latestRes.event === 'message_end') {
-
+          let params = {
+            question: item.query,
+            answer: item.response,
+            chat_no: 2,
+          }
+          this.addHistory(params)
           // 手动结束sse
           this.closeSSE();
           item.loadings = false;
@@ -1170,11 +1170,12 @@ export default {
     showAndHide(index) {
       this.show = !this.show
       this.showIndex = index
+      console.log(index)
       if (this.show) {
         document.getElementById('think-'+index).className = 'collapsible tip'
 
       } else {
-        document.getElementById('think-'+index).className = 'tip'
+        document.getElementById('think-'+index).className = 'scroll tip'
       }
 
     },
@@ -1190,7 +1191,6 @@ export default {
         },
         body: JSON.stringify(data),
       }).then(res=>res.json()).then(data=> {
-        this.getHistory()
       })
     },
     getHistory() {
@@ -1215,7 +1215,7 @@ export default {
         response_status: '',
       }
       const params = new URLSearchParams();
-      params.append('chatNo', this.type);
+      params.append('chat_no', 2);
       fetch(`http://10.20.13.201:80/smiling/education/list/history?${params}`, {
         // fetch('http://39.106.131.95:9002/education/insertWriteFeedback', {
         method: 'get',
@@ -1227,7 +1227,7 @@ export default {
 
             data.data.forEach((item2,index) => {
               item.responseMdText = this.getMarkdown().render(item2.answer) ;
-              item.responseMdText = item.responseMdText.replace(/<think>/g, '<think id="think-'+index+'" class="tip"" >');
+              item.responseMdText = item.responseMdText.replace(/<think>/g, '<think id="think-'+index+'" class="scroll tip"" >');
               item.responseMdText = item.responseMdText.replace(/<\/think><\/p>/g, '</p></think>');
               item.responseText =item2.answer;
               item.time = item2.create_time;
@@ -1259,7 +1259,11 @@ export default {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
+.scroll{
+  max-height: 100px; /* 根据需要设置高度 */
+  overflow-y: auto;
+  display: block;
+}
 .toggle {
   float: right;
   transform: rotate(0deg);
