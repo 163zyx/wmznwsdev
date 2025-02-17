@@ -220,19 +220,19 @@
       },
       textGet() {
         let self = this
-        fetch(`https://map.data.moe.edu.cn/page`, {
-          method: 'GET',
-          headers: {
-            'topsession': self.token,
-          },
-        }).then(function (data) {
-          return data.text()
-        }).then(function (data) {
-          let res = JSON.parse(data)
-          // console.log("datares",res)
-        }).catch(err => {
-          console.log(err)
-        })
+        // fetch(`https://map.data.moe.edu.cn/page`, {
+        //   method: 'GET',
+        //   headers: {
+        //     'topsession': self.token,
+        //   },
+        // }).then(function (data) {
+        //   return data.text()
+        // }).then(function (data) {
+        //   let res = JSON.parse(data)
+        //   // console.log("datares",res)
+        // }).catch(err => {
+        //   console.log(err)
+        // })
       },
       handleGoSearch(url){
           this.searchUrl = url

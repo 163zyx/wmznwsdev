@@ -81,8 +81,7 @@
                   style="display: flex;flex-direction: column;align-items: flex-start;">
                   <div style="width: 100%;display: flex;flex-direction: row;justify-content: space-between;">
                     <div>
-                      <p v-if="item.showChart" style="font-size: 15px;line-height: 27px;"></p>
-                      <p v-else style="font-size: 15px;line-height: 27px;"  v-html="item.responseMdText || '未找到该内容'"></p>
+                      <p style="font-size: 15px;line-height: 27px;"  v-html="item.responseMdText || '未找到该内容'"></p>
                     </div>
                     <!-- <div v-if="item.showChart" style="flex:1;display:flex;justify-content: flex-end;margin-top: -10px;">
                       <el-radio-group v-model="item.type" @change="handleRadioChange(item.type, item)">
@@ -98,16 +97,20 @@
                     </div> -->
                   </div>
 
-                  <div v-show="item.showChart && item.type === 'bar'" :id="`chart${index}`" style="width: 600px;height:400px;"></div>
-                  <div v-show="item.showChart && item.type === 'line'" :id="`chart${index}` + '0'" style="width: 600px;height:400px;"></div>
+                  <!-- <div v-show="item.showChart" :id="`chart${index}`" style="width: 600px;height:400px;"></div> -->
+                  <!-- <div v-show="item.showChart && item.type === 'line'" :id="`chart${index}` + '0'" style="width: 600px;height:400px;"></div> -->
 
                   <div class="tip" v-if="item.chartData && item.chartData[1].data.source">
                     <span class="tip_text">数据来源：{{item.chartData[1].data.source}}</span>
                   </div>
                   <div class="tip" v-show="item.showChart">
-                    <span class="tip_text">根据你的需求，我为你生成了相应图表，也可以生成与本图表相关的一些分析。</span>
-                    <el-button type="text" @click="handleNeedCommend(item)">需要分析</el-button>
+                    <!-- <span class="tip_text">根据你的需求，我为你生成了相应图表，也可以生成与本图表相关的一些分析。</span> -->
+                    <span class="tip_text">根据你的需求，我为你生成了相应图表。</span>
+
+                    <!-- <el-button type="text" @click="handleNeedCommend(item)">需要分析</el-button> -->
                   </div>
+                  <!-- <div id="chart-text" style="width: 600px;height:400px;"></div> -->
+                  <div v-show="item.showChart" :id="`chart${index}`" style="width: 600px;height:400px;"></div>
                   <div style="width: 100%;display: flex;justify-content: flex-end;" class="duifangcontent"
                     v-if="item.copy">
                     <div class="sjinfo-right-title-right-img"
@@ -250,6 +253,7 @@ export default {
         chatQueryType: '',
         renderResponseInterval: null,
         renderResponseInx: 0,
+        chart_data: null,
       }
     },
     computed: {
@@ -358,38 +362,42 @@ export default {
       },
       renderEcharts(item, d) {
         item.showChart = true
-        item.chartData = d
-        this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
-        this.chatData = JSON.parse(JSON.stringify(this.chatData));
+        // item.chartData = d
+        // this.chatData[this.chatData.length - 1] = JSON.parse(JSON.stringify(item))
+        // this.chatData = JSON.parse(JSON.stringify(this.chatData));
 
         this.$nextTick(() => {
           document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
             .scrollHeight
-          if (!item.response) {
-            let cData = [...d];
-            if (typeof(cData[0].data) === 'string') {
-              cData[0].data = {
-                options: {
-                  showTitle: true,
-                  legend: {}
-                },
-                title: cData[0].data,
-              }
-            }
-            cData[0].data.options.legend.bottom = 0
+          console.log("document.getElementsByClassName('chat')",document.getElementsByClassName('chat'))
+          // if (!item.response) {
+          //   let cData = [...d];
+          //   if (typeof(cData[0].data) === 'string') {
+          //     cData[0].data = {
+          //       options: {
+          //         showTitle: true,
+          //         legend: {}
+          //       },
+          //       title: cData[0].data,
+          //     }
+          //   }
+          //   cData[0].data.options.legend.bottom = 0
 
-            if (cData[0].data.title === "高校在校生与gdp关系") {
-              cData[0].data.options.yAxis.axisLabel.formatter = function (value, index) {
-                return (value / 10000).toFixed(1) + "万元"
-              }
-            }
+          //   if (cData[0].data.title === "高校在校生与gdp关系") {
+          //     cData[0].data.options.yAxis.axisLabel.formatter = function (value, index) {
+          //       return (value / 10000).toFixed(1) + "万元"
+          //     }
+          //   }
 
-            this.initChart(`chart${this.chatData.length - 1}`, cData[0].data.options)
-            // d[0].data.legend.bottom = 0
-            // d[1].data.legend.bottom = 0
-            // this.initChart(`chart${this.chatData.length -1}`, d[0].data)
-            // this.initCharts(`chart${this.chatData.length -1 +'0'}`, d[1].data)
-          }
+          //   this.initChart(`chart${this.chatData.length - 1}`, cData[0].data.options)
+          //   // d[0].data.legend.bottom = 0
+          //   // d[1].data.legend.bottom = 0
+          //   // this.initChart(`chart${this.chatData.length -1}`, d[0].data)
+          //   // this.initCharts(`chart${this.chatData.length -1 +'0'}`, d[1].data)
+          // }
+          // console.log("${this.chatData.length - 1}",this.chatData.length - 1)
+          // console.log("d.option",d.options)
+          this.initChart(`chart${this.chatData.length - 1}`, d.options)
         })
       },
       renderSseMessage(sseMessages) {
@@ -420,6 +428,7 @@ export default {
               this.addHistory(params)
               // 手动结束sse
               this.closeSSE();
+              this.renderEcharts(item, this.chart_data);
             }
           } else {
             resType = 'echarts'
@@ -587,12 +596,14 @@ export default {
         })
       },
       initChart(elId, option) {
-        if (echarts.getInstanceByDom(document.getElementById(elId))) {
-          echarts.dispose(document.getElementById(elId));
-        }
-        var myChart = echarts.init(document.getElementById(elId));
-        echarts.registerTransform(ecStat.transform.regression);
-        myChart.setOption(option);
+        // if (echarts.getInstanceByDom(document.getElementById(elId))) {
+        //   echarts.dispose(document.getElementById(elId));
+        // }
+        this.$nextTick(() => {
+          var myChart = echarts.init(document.getElementById(elId));
+          myChart.setOption(option);
+        })
+        // echarts.registerTransform(ecStat.transform.regression);
       },
       initCharts(elId, option) {
         if (echarts.getInstanceByDom(document.getElementById(elId))) {
@@ -636,6 +647,7 @@ export default {
         if (this.chatText === undefined || this.chatText === '' || this.chatText === null) return;
         const that = this
         let value
+        that.chart_data = null;
         if (this.useTemplate) {
           let useTemplateEl = document.getElementById('useTemplate')
           let text = ""
@@ -694,6 +706,10 @@ export default {
             response_status: '',
           }
           that.chatData.push(item)
+          if(res.result[0] && res.result[0].type === "echart") {
+            that.chart_data = res.result[0].data
+          }
+          console.log("resData", res.result[0])
           that.$nextTick(() => {
             document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
               .scrollHeight
