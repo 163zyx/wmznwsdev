@@ -187,10 +187,10 @@
         <el-input v-else v-model="chatText" type="text" placeholder="请输入问题相关描述" @keydown.enter="sendChat()">
           <el-select class="select_url" v-model="selectUrl" slot="prepend" placeholder="请选择">
             <!-- <el-option label="年鉴数据" :value="getApiUrl('/glm/v2/chatdata?v=4&t=nj&q=')"></el-option> -->
-            <el-option label="年鉴数据" :value="'https://map.data.moe.edu.cn/rest/glm/analyse'"></el-option>
-            <!-- el-option label="业务数据" value="http://10.40.241.6:17862/glm/v2/chatdata?v=4&t=jck&q="></el-option>
-            <el-option label="经济人口" value="http://10.40.241.6:17862/glm/v2/chatdata?v=4&t=jr&q="></el-option>
-            <el-option label="Auto" value="http://10.40.241.6:17862/glm/v3/chat?q="></el-option-->
+            <el-option label="年鉴数据" :value="'https://map.data.moe.edu.cn/rest/glm/chatdata?t=nj&q='"></el-option>
+            <el-option label="业务数据" value="https://map.data.moe.edu.cn/rest/glm/chatdata?t=jck&q="></el-option>
+            <!-- <el-option label="经济人口" value="http://10.40.241.6:17862/glm/v2/chatdata?v=4&t=jr&q="></el-option>
+            <el-option label="Auto" value="http://10.40.241.6:17862/glm/v3/chat?q="></el-option> -->
           </el-select>
         </el-input>
         <el-button :disabled="chatLock" @click="sendChat()">发送</el-button>
@@ -223,7 +223,8 @@ export default {
         // selectUrl: 'https://map.data.moe.edu.cn/rest/glm/chatdata?t=nj&q=',
         // selectUrl: 'http://47.123.4.81:3389/glm/test?v=4&t=nj&q=',
         // selectUrl: getApiUrl('/glm/v2/chatdata?v=4&t=nj&q='),
-        selectUrl: 'https://map.data.moe.edu.cn/rest/glm/analyse',
+        // selectUrl: 'https://map.data.moe.edu.cn/rest/glm/analyse',
+        selectUrl: 'https://map.data.moe.edu.cn/rest/glm/chatdata?t=nj&q=',
         dialogVisible: false,
         image: '',
         AIList: [],
@@ -655,7 +656,7 @@ export default {
           return
         }
         that.chatLock = true;
-        fetch('https://map.data.moe.edu.cn/rest/glm/chatdata?t=nj&q='+ this.chatText, {
+        fetch(that.selectUrl + this.chatText, {
           // fetch('http://39.106.131.95:9002/education/verify', {
           method: 'POST',
           headers: {
@@ -696,7 +697,7 @@ export default {
           let d
           try {
             // sse请求
-            that.initSSE(that.selectUrl, {'data':JSON.stringify(resData)}, 'change');
+            that.initSSE('https://map.data.moe.edu.cn/rest/glm/analyse', {'data':JSON.stringify(resData)}, 'change');
             // this.initSSE(this.selectUrl + value);
             /*// 如果需要进行超时就在调用这个方法，fetchWithTimeout
             d = await this.fetchWithTimeout(this.selectUrl + value, {
