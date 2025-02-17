@@ -322,7 +322,7 @@ export default {
       }
     },
     mounted() {
-
+      this.getHistory()
     },
     methods: {
       getApiUrl,
@@ -411,6 +411,12 @@ export default {
             item.response_status = latestRes.status;
             // 会在watch-latestChatResponse里面渲染text，并执行afterChatSuccess
             if (latestRes.status === 'finish') {
+              let params = {
+                question: item.query,
+                answer: item.response,
+                chat_no: 1,
+              }
+              this.addHistory(params)
               // 手动结束sse
               this.closeSSE();
             }
@@ -1086,6 +1092,70 @@ export default {
           this.useTemplate = false
           this.chatText = item.content
         }
+      },
+      addHistory(data) {
+        // 保存问题和答案
+
+        // console.log("params", data)
+        const x = fetch("http://10.20.13.201:80/smiling/education/add/history", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;',
+            "X-User-ID": Cookies.get('user_id'),
+          },
+          body: JSON.stringify(data),
+        }).then(res=>res.json()).then(data=> {
+        })
+      },
+      getHistory() {
+        let that = this
+        // console.log(that.chatData)
+        this.chatData = []
+        let item = {
+          query: '',
+          loading: true,
+          time: '',
+          QuestionAndAnswer: {},
+          wdbadShow: false,
+          wdpj: '',
+          wdpjinfo: {},
+          showChart: false,
+          wdbadpjinfo: {
+            inputvalue: '',
+            badinfo: [],
+          },
+          responseText: '',
+          responseMdText: '',
+          response_status: '',
+        }
+        const params = new URLSearchParams();
+        params.append('chat_no', 1);
+        fetch(`https://officechat.emic.edu.cn/smiling/education/list/history?${params}`, {
+          // fetch('http://39.106.131.95:9002/education/insertWriteFeedback', {
+          method: 'get',
+          headers: {
+            "X-User-ID": Cookies.get('user_id'),
+          }
+        }).then(response => response.json())
+            .then(data =>{
+
+              data.data.forEach((item2,index) => {
+                item.responseMdText = this.getMarkdown().render(item2.answer) ;
+                // item.responseMdText = item.responseMdText.replace(/<think>/g, '<think id="think-'+index+'" class="scroll tip"" >');
+                // item.responseMdText = item.responseMdText.replace(/<\/think><\/p>/g, '</p></think>');
+                item.responseText =item2.answer;
+                item.time = item2.create_time;
+                item.query = item2.question;
+                item.loading = false;
+                item.loadings = false;
+                item.response_status = "loading";
+                item.wdbadShow = false;
+                that.chatData.push(item);
+                that.chatData = JSON.parse(JSON.stringify(that.chatData));
+                // console.log(that.chatData)
+              })
+            })
+            .catch(error => console.error('Error:', error));
       },
     }
   }

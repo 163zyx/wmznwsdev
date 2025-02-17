@@ -191,8 +191,8 @@
       getTopSession() {
         let self = this
         let url = window.location.href
-        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=698d26133335add5b105a5f0ed25c700';
-        // console.log("url", url.split('=')[1]);
+        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=3b8361eef5c68df3daf853ba2eacbb6b';
+        console.log("url", url.split('=')[1]);
         let token = url.split('=')[1];
         fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {
           method: 'GET',
@@ -200,7 +200,7 @@
           return data.text()
         }).then(function (data) {
           let res = JSON.parse(data)
-          // console.log("res",res)
+          console.log("res",res)
           if(res.status === 'success') {
             let result = res.result
             self.token = result.token

@@ -1216,7 +1216,7 @@ export default {
       }
       const params = new URLSearchParams();
       params.append('chat_no', 2);
-      fetch(`http://10.20.13.201:80/smiling/education/list/history?${params}`, {
+      fetch(`https://officechat.emic.edu.cn/smiling/education/list/history?${params}`, {
         // fetch('http://39.106.131.95:9002/education/insertWriteFeedback', {
         method: 'get',
         headers: {
