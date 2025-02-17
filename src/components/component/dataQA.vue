@@ -683,7 +683,7 @@ export default {
           return data.text();
         }).then(function (data) {
           var res = JSON.parse(data)
-          let resData = res.result[1].data
+          let resData = null
           let item = {
             query: value,
             loading: true,
@@ -705,9 +705,17 @@ export default {
             response_status: '',
           }
           that.chatData.push(item)
-          if(res.result[0] && res.result[0].type === "echart") {
-            that.chart_data = res.result[0].data
-          }
+          res.result.forEach(item => {
+              if(item.type === "echart") {
+                that.chart_data = item.data
+              }
+              if(item.type === "analyse") {
+                resData = item.data
+              }
+          })
+          // if(res.result[0] && res.result[0].type === "echart") {
+          //   that.chart_data = res.result[0].data
+          // }
           console.log("resData", res.result[0])
           that.$nextTick(() => {
             document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
