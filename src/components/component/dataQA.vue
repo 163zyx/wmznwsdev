@@ -369,7 +369,6 @@ export default {
         this.$nextTick(() => {
           document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
             .scrollHeight
-          console.log("document.getElementsByClassName('chat')",document.getElementsByClassName('chat'))
           // if (!item.response) {
           //   let cData = [...d];
           //   if (typeof(cData[0].data) === 'string') {
