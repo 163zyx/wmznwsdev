@@ -329,7 +329,6 @@ export default {
     }
   },
   mounted() {
-
     this.getHistory()
   },
   methods: {

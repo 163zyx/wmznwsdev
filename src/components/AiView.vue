@@ -175,9 +175,13 @@
       KnowledgeBase,
       KnowledgeQA,
     },
+    created() {
+      if(Cookies.get('topsession'))return
+      this.getTopSession()
+    },
     mounted(){
       // 从网页地址中判断是否有token，如果有则直接跳转到个人知识库
-      this.getTopSession()
+
       this.getUserInfo()
       // if (url.indexOf('token') === -1) {
       //   // 往地址跳转
