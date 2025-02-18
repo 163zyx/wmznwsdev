@@ -56,7 +56,7 @@
             <div class="user-menu">
               <el-dropdown>
                 <span class="el-dropdown-link">
-                  智能问数用户<i class="el-icon-arrow-down el-icon--right"></i>
+                  {{ info.nickname }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item @click.native="tabSelectedChange(4)" icon="el-icon-reading">个人知识库</el-dropdown-item>
@@ -163,6 +163,7 @@
         loading: false,
         uploading: false,
         token: null,
+        info:'',
       }
     },
     components: {
@@ -177,6 +178,7 @@
     mounted(){
       // 从网页地址中判断是否有token，如果有则直接跳转到个人知识库
       this.getTopSession()
+      this.getUserInfo()
       // if (url.indexOf('token') === -1) {
       //   // 往地址跳转
       //   window.location.href = 'https://user.moe.edu.cn/www/public/home/login?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice%3Dhttps%253A%252F%252Fmap.data.moe.edu.cn%252Fchat%252F'
@@ -191,8 +193,8 @@
       getTopSession() {
         let self = this
         let url = window.location.href
-        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=3b8361eef5c68df3daf853ba2eacbb6b';
-        console.log("url", url.split('=')[1]);
+        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=1a71bb34e0febf0a0ad60eb804240af3';
+        // console.log("url", url.split('=')[1]);
         let token = url.split('=')[1];
         fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {
           method: 'GET',
@@ -326,6 +328,20 @@
         this.uploadVisible = false
         this.tabSelected = 4
       },
+      getUserInfo() {
+        let self = this
+        fetch('https://map.data.moe.edu.cn/rest/user/info',{
+          method: 'GET',
+          headers: {
+            'topsession': Cookies.get('topsession'),
+          },
+        }).then(function (data) {
+          return data.text();
+        })  .then(function (data) {
+          var res = JSON.parse(data)
+          self.info = res.result
+        })
+      }
     }
   }
 
