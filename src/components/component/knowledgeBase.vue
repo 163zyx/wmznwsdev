@@ -19,10 +19,11 @@
           </el-form-item>
           <el-form-item label="文件类型：">
             <el-radio-group v-model="form.docType">
-              <el-radio-button label="all">全部</el-radio-button>
-              <el-radio-button label="word">Word文件</el-radio-button>
+              <el-radio-button label="">全部</el-radio-button>
+              <el-radio-button label="docx">Word文件</el-radio-button>
               <el-radio-button label="txt">txt文件</el-radio-button>
               <el-radio-button label="pdf">PDF文件</el-radio-button>
+              <el-radio-button label="csv">CSV文件</el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-row>
@@ -139,7 +140,7 @@ export default {
       return {
         form: {
           name: '',
-          docType: 'all',
+          docType: '',
           checkType: 'all',
           checkResult: 'all',
           uploadDate: '',
@@ -167,14 +168,19 @@ export default {
       getApiUrl,
       getBaseList() {
         let self = this;
-        let param = {
-          'page': self.currentPage,
-          'size': 10,
-        }
-        fetch('https://officechat.emic.edu.cn/smiling/knowledge/file/list', {
+        let start_time = self.form.uploadDate? self.form.uploadDate[0] : '';
+        let end_time = self.form.uploadDate? self.form.uploadDate[1] : '';
+        // let param = {
+        //   'name': self.form.name,
+        //   'type': self.form.docType,
+        //   'page': self.currentPage,
+        //   'start_time': self.form.uploadDate? self.form.uploadDate[0] : '',
+        //   'end_time': self.form.uploadDate? self.form.uploadDate[1] : '',
+        //   'size': 10,
+        // }
+        fetch(`https://officechat.emic.edu.cn/smiling/knowledge/file/list?name=${self.form.name}&type=${self.form.docType}&page=${self.currentPage}&size=10&start_time=${start_time}&end_time=${end_time}`, {
           // fetch('http://39.106.131.95:9002/education/verify', {
           method: 'GET',
-          query: param,
           headers: {
             'X-User-ID': Cookies.get('user_id'),
           },
