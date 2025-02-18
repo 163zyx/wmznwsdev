@@ -404,9 +404,7 @@ export default {
       })
     },
     renderSseMessage(sseMessages) {
-      console.log('sseMessages:', sseMessages)
       const d = JSON.parse(JSON.stringify(sseMessages));
-      console.log("d", d)
       if (!d.length) return
 
       if (this.chatData.length > 0) {
@@ -642,7 +640,6 @@ export default {
         for (var i = 0; i < box.length; i++) {
           console.log(box[i].innerText, query)
           if (box[i].innerText == query) {
-            console.log(box[i].offsetTop)
             box[i].scrollIntoView(true)
             break;
           }
@@ -679,6 +676,27 @@ export default {
       if (this.chatLock) {
         return
       }
+      let item = {
+        query: value,
+        loading: true,
+        loadings: true,
+        time: new Date().getTime(),
+        QuestionAndAnswer: {},
+        wdbadShow: false,
+        wdpj: '',
+        wdpjinfo: {},
+        showChart: false,
+        wdbadpjinfo: {
+          inputvalue: '',
+          badinfo: [],
+        },
+        AIList: [],
+        type: 'bar',
+        responseText: '',
+        responseMdText: '',
+        response_status: '',
+      }
+      that.chatData.push(item)
       that.chatLock = true;
       fetch(that.selectUrl + this.chatText, {
         // fetch('http://39.106.131.95:9002/education/verify', {
@@ -691,27 +709,6 @@ export default {
       }).then(function (data) {
         var res = JSON.parse(data)
         let resData = null
-        let item = {
-          query: value,
-          loading: true,
-          loadings: true,
-          time: new Date().getTime(),
-          QuestionAndAnswer: {},
-          wdbadShow: false,
-          wdpj: '',
-          wdpjinfo: {},
-          showChart: false,
-          wdbadpjinfo: {
-            inputvalue: '',
-            badinfo: [],
-          },
-          AIList: [],
-          type: 'bar',
-          responseText: '',
-          responseMdText: '',
-          response_status: '',
-        }
-        that.chatData.push(item)
         res.result.forEach(item => {
           if (item.type === "echart") {
             that.chart_data = item.data
@@ -720,16 +717,11 @@ export default {
             resData = item.data
           }
         })
-        // if(res.result[0] && res.result[0].type === "echart") {
-        //   that.chart_data = res.result[0].data
-        // }
-        console.log("resData", res.result)
         that.$nextTick(() => {
           document.getElementsByClassName('chat')[0].scrollTop = document.getElementsByClassName('chat')[0]
               .scrollHeight
         })
         that.useTemplate = false
-
         let d
         try {
           // sse请求
