@@ -12,9 +12,6 @@
               <el-col :span="8">
                 <el-input v-model="form.name"></el-input>
               </el-col>
-              <el-col :span="8">
-                <el-button @click="getBaseList">搜索</el-button>
-              </el-col>
             </el-row>
           </el-form-item>
           <el-form-item label="文件类型：">
@@ -63,6 +60,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item>
+                <el-button type="primary" @click="getBaseList">搜索</el-button>
                 <el-button type="primary" @click="uploadShow">上传文件</el-button>
               </el-form-item>
             </el-col>
