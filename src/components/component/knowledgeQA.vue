@@ -1180,7 +1180,7 @@ export default {
       // 保存问题和答案
 
       console.log("params", data)
-      const x = fetch("http://10.20.13.201:80/smiling/education/add/history", {
+      const x = fetch("https://officechat.emic.edu.cn/smiling/education/add/history", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;',
