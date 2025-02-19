@@ -1188,6 +1188,7 @@ export default {
         },
         body: JSON.stringify(data),
       }).then(res=>res.json()).then(data=> {
+        this.getHistory()
       })
     },
     getHistory() {

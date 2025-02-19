@@ -214,9 +214,11 @@ import ecStat from 'echarts-stat';
 import MarkdownIt from 'markdown-it';
 import sseMixin from "../../../utils/sseMixin";
 import {getApiUrl} from "../../../utils";
+import { eventBus } from '../../../utils/eventBus';
 
 export default {
   mixins: [sseMixin],
+  // props: ['cookieUid'],
   data() {
     return {
       chatText: undefined,
@@ -256,6 +258,7 @@ export default {
       renderResponseInterval: null,
       renderResponseInx: 0,
       chart_data: null,
+      cookieUid:''
     }
   },
   computed: {
@@ -329,7 +332,19 @@ export default {
     }
   },
   mounted() {
-    this.getHistory()
+    eventBus.$on('cookieUid', (data) => {
+      console.log('data',data)
+      this.cookieUid = data;
+      this.getHistory()
+    });
+    if (Cookies.get('topsession')) {
+      console.log(1111)
+       this.getHistory();
+    }
+  },
+  beforeDestroy() {
+    // 销毁事件监听
+    eventBus.$off('cookieUid');
   },
   methods: {
     getApiUrl,
@@ -1127,21 +1142,22 @@ export default {
         },
         body: JSON.stringify(data),
       }).then(res => res.json()).then(data => {
+        this.getHistory()
       })
     },
-    getHistory() {
+    async getHistory() {
       let that = this
       // console.log(that.chatData)
       this.chatData = []
-
-
+      console.log('this.cookieUid',that.cookieUid)
+      console.log('user_id', Cookies.get('user_id'))
       const params = new URLSearchParams();
       params.append('chat_no', 1);
-      fetch(`https://officechat.emic.edu.cn/smiling/education/list/history?${params}`, {
+      await fetch(`https://officechat.emic.edu.cn/smiling/education/list/history?${params}`, {
         // fetch('http://39.106.131.95:9002/education/insertWriteFeedback', {
         method: 'get',
         headers: {
-          "X-User-ID": Cookies.get('user_id'),
+          "X-User-ID": Cookies.get('user_id')? Cookies.get('user_id'):that.cookieUid,
         }
       }).then(response => response.json())
           .then(data => {

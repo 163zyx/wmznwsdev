@@ -151,6 +151,7 @@
   import ReferenceQaDrawer from "./component/ReferenceQaDrawer.vue";
   import KnowledgeBase from '../components/component/knowledgeBase.vue';
   import KnowledgeQA from '../components/component/knowledgeQA.vue';
+  import { eventBus } from '../../utils/eventBus';
 
   export default {
     name: '',
@@ -164,6 +165,7 @@
         uploading: false,
         token: null,
         info:'',
+        cookieUid:'',
       }
     },
     components: {
@@ -176,16 +178,16 @@
       KnowledgeQA,
     },
     created() {
-      if(Cookies.get('topsession'))return
-      this.getTopSession()
-    },
-    mounted(){
-      // 从网页地址中判断是否有token，如果有则直接跳转到个人知识库
+      // if(Cookies.get('topsession')) return
+      // this.getTopSession()
 
-      this.getUserInfo()
+    },
+     mounted(){
+      // 从网页地址中判断是否有token，如果有则直接跳转到个人知识库
+       this.initApp()
       // if (url.indexOf('token') === -1) {
       //   // 往地址跳转
-      //   window.location.href = 'https://user.moe.edu.cn/www/public/home/login?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice%3Dhttps%253A%252F%252Fmap.data.moe.edu.cn%252Fchat%252F'
+      //   window.location.href = 'https://user.moe.edu.cn/www/public/home/login?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice=http://localhost:8080'
       // }
     },
     watch: {
@@ -194,35 +196,51 @@
       }
     },
     methods: {
-      getTopSession() {
-        let self = this
-        let url = window.location.href
-        // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=1a71bb34e0febf0a0ad60eb804240af3';
-        // console.log("url", url.split('=')[1]);
-        let token = url.split('=')[1];
-        fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {
-          method: 'GET',
-        }).then(function (data) {
-          return data.text()
-        }).then(function (data) {
-          let res = JSON.parse(data)
-          console.log("res",res)
-          if(res.status === 'success') {
-            let result = res.result
-            self.token = result.token
-            Cookies.set('user_id', decodeURIComponent(result.user_id));
-            Cookies.set('topsession', decodeURIComponent(result.token));
-          } else {
-            if(Cookies.get('topsession')){
-              self.token = Cookies.get('topsession')
-              self.textGet()
-            } else {
-              window.location.href ='https://user.moe.edu.cn/www/uc/cas/logout?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice%3Dhttps%253A%252F%252Fmap.data.moe.edu.cn%252Fchat%252F'
-            }
-          }
-        }).catch(err => {
-          console.log(err)
-        })
+      async initApp() {
+        if (!Cookies.get('topsession')) {
+          await this.getTopSession();
+        }
+        this.getUserInfo();
+      },
+       getTopSession() {
+         let self = this
+         return new Promise((resolve, reject) => {
+           let url = window.location.href
+           // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=833ed19522f34dd553a5e1f537ceed75';
+           let token = url.split('=')[1];
+           fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {
+             method: 'GET',
+           })
+               .then(data => data.text())
+               .then(data => {
+                 let res = JSON.parse(data);
+                 console.log("res",res)
+                 if (res.status === 'success') {
+                   let result = res.result;
+                   self.token = result.token;
+                   self.cookieUid = result.user_id;
+                   eventBus.$emit('cookieUid', self.cookieUid);
+
+                   Cookies.set('user_id', decodeURIComponent(result.user_id));
+                   Cookies.set('topsession', decodeURIComponent(result.token));
+                   resolve();
+                 } else {
+                   if (Cookies.get('topsession')) {
+                     self.token = Cookies.get('topsession');
+                     self.textGet();
+                     resolve();
+                   } else {
+
+                     window.location.href ='https://user.moe.edu.cn/www/uc/cas/logout?url=%2Fwww%2Fuc%2Fcas%2Findex%3Fservice%3Dhttps%253A%252F%252Fmap.data.moe.edu.cn%252Fchat%252F'
+                     reject(new Error('Failed to get top session'));
+                   }
+                 }
+               })
+               .catch(err => {
+                 console.log(err);
+                 reject(err);
+               });
+         });
       },
       textGet() {
         let self = this
@@ -332,12 +350,14 @@
         this.uploadVisible = false
         this.tabSelected = 4
       },
-      getUserInfo() {
+       getUserInfo() {
         let self = this
-        fetch('https://map.data.moe.edu.cn/rest/user/info',{
+        console.log('self.token1',self.token)
+        console.log('topsession',Cookies.get('topsession'))
+         fetch('https://map.data.moe.edu.cn/rest/user/info',{
           method: 'GET',
           headers: {
-            'topsession': Cookies.get('topsession'),
+            'topsession': Cookies.get('topsession')?Cookies.get('topsession'):self.token,
           },
         }).then(function (data) {
           return data.text();
