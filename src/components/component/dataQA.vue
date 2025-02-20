@@ -6,7 +6,7 @@
         提问历史记录
       </div>
       <div class="xz-left-list">
-        <div class="xz-left-list-item" v-for="(item,index) in chatData" :key="index" @click="clickChatText(item.query)">
+        <div class="xz-left-list-item" v-for="(item,index) in chatData2" :key="index" @click="clickChatText(item.query)">
           <p class="title">{{ item.query }}</p>
           <p class="time">{{ timestampToTime(item.time) }}</p>
         </div>
@@ -262,6 +262,13 @@ export default {
     }
   },
   computed: {
+    chatData2() {
+      // 返回倒序的 chatData
+      const data = JSON.parse(JSON.stringify(this.chatData));
+      const list = data.sort((a, b) => a.Index - b.Index);
+
+      return list
+    },
     latestChatResponse() {
       const item = this.chatData[this.chatData.length - 1] || {};
       return {
@@ -706,6 +713,7 @@ export default {
         },
         AIList: [],
         type: 'bar',
+        Index:that.chatData[0].Index - 1,
         responseText: '',
         responseMdText: '',
         response_status: '',
@@ -1172,6 +1180,7 @@ export default {
                   inputvalue: '',
                   badinfo: [],
                 },
+                Index:index,
                 responseText: '',
                 responseMdText: '',
                 response_status: '',
@@ -1194,7 +1203,6 @@ export default {
               that.chatData = JSON.parse(JSON.stringify(that.chatData));
               if (answerArr.length > 1) {
                 that.chart_data = JSON.parse(answerArr[1])
-                let Index = data.data.length - 1-index;
                 // that.renderEcharts(item, that.chart_data)
                 that.initChart('chart' + index, that.chart_data.options)
 

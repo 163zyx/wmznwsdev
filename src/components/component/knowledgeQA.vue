@@ -6,7 +6,7 @@
         提问历史记录
       </div>
       <div class="xz-left-list">
-        <div class="xz-left-list-item" v-for="(item,index) in chatData" :key="index" @click="clickChatText(item.query)">
+        <div class="xz-left-list-item" v-for="(item,index) in chatData2" :key="index" @click="clickChatText(item.query)">
           <p class="title">{{ item.query }}</p>
           <p class="time">{{ timestampToTime(item.time) }}</p>
         </div>
@@ -271,6 +271,13 @@ export default {
     }
   },
   computed: {
+    chatData2() {
+      // 返回倒序的 chatData
+      const data = JSON.parse(JSON.stringify(this.chatData));
+      const list = data.sort((a, b) => a.Index - b.Index);
+
+      return list
+    },
     latestChatResponse() {
       const item = this.chatData[this.chatData.length - 1] || {};
       return {
@@ -751,6 +758,7 @@ export default {
         },
         AIList: [],
         type: 'bar',
+        Index:that.chatData[0].Index - 1,
         responseText: '',
         responseMdText: '',
         response_status: '',
@@ -1194,23 +1202,7 @@ export default {
       let that = this
       // console.log(that.chatData)
       this.chatData = []
-      let item = {
-        query: '',
-        loading: true,
-        time: '',
-        QuestionAndAnswer: {},
-        wdbadShow: false,
-        wdpj: '',
-        wdpjinfo: {},
-        showChart: false,
-        wdbadpjinfo: {
-          inputvalue: '',
-          badinfo: [],
-        },
-        responseText: '',
-        responseMdText: '',
-        response_status: '',
-      }
+
       const params = new URLSearchParams();
       params.append('chat_no', 2);
       fetch(`https://officechat.emic.edu.cn/smiling/education/list/history?${params}`, {
@@ -1223,6 +1215,24 @@ export default {
           .then(data =>{
 
             data.data.forEach((item2,index) => {
+              let item = {
+                query: '',
+                loading: true,
+                time: '',
+                QuestionAndAnswer: {},
+                wdbadShow: false,
+                wdpj: '',
+                wdpjinfo: {},
+                showChart: false,
+                wdbadpjinfo: {
+                  inputvalue: '',
+                  badinfo: [],
+                },
+                Index:index,
+                responseText: '',
+                responseMdText: '',
+                response_status: '',
+              }
               item.responseMdText = this.getMarkdown().render(item2.answer) ;
               item.responseMdText = item.responseMdText.replace(/<think>/g, '<think id="think-'+index+'" class="scroll tip"" >');
               item.responseMdText = item.responseMdText.replace(/<\/think><\/p>/g, '</p></think>');
@@ -1237,10 +1247,7 @@ export default {
               that.chatData = JSON.parse(JSON.stringify(that.chatData));
               // console.log(that.chatData)
             })
-            that.chatData.sort((a, b) => b.time - a.time);
 
-            // 按时间正序排列内容（假设内容和问题在同一个数组中）
-            that.chatData.sort((a, b) => a.time - b.time);
             console.log(that.chatData)
 
           })
