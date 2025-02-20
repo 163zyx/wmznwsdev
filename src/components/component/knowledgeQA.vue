@@ -758,7 +758,7 @@ export default {
         },
         AIList: [],
         type: 'bar',
-        Index:that.chatData[0].Index - 1,
+        Index:that.chatData.length? that.chatData[0].Index - 1: 0,
         responseText: '',
         responseMdText: '',
         response_status: '',
