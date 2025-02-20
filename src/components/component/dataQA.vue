@@ -1142,15 +1142,12 @@ export default {
         },
         body: JSON.stringify(data),
       }).then(res => res.json()).then(data => {
-        this.getHistory()
       })
     },
     async getHistory() {
       let that = this
       // console.log(that.chatData)
       this.chatData = []
-      console.log('this.cookieUid',that.cookieUid)
-      console.log('user_id', Cookies.get('user_id'))
       const params = new URLSearchParams();
       params.append('chat_no', 1);
       await fetch(`https://officechat.emic.edu.cn/smiling/education/list/history?${params}`, {
@@ -1180,7 +1177,6 @@ export default {
                 response_status: '',
               }
               let answerArr = item2.answer.split('&')
-
               item.responseMdText = this.getMarkdown().render(answerArr[0]);
               // item.responseMdText = item.responseMdText.replace(/<think>/g, '<think id="think-'+index+'" class="scroll tip"" >');
               // item.responseMdText = item.responseMdText.replace(/<\/think><\/p>/g, '</p></think>');
@@ -1198,8 +1194,10 @@ export default {
               that.chatData = JSON.parse(JSON.stringify(that.chatData));
               if (answerArr.length > 1) {
                 that.chart_data = JSON.parse(answerArr[1])
+                let Index = data.data.length - 1-index;
                 // that.renderEcharts(item, that.chart_data)
                 that.initChart('chart' + index, that.chart_data.options)
+
               }
             })
           })

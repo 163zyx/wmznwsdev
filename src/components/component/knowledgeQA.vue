@@ -697,7 +697,7 @@ export default {
       const box = document.getElementsByClassName('chat')[0].getElementsByClassName('my-query')
       if (box && box.length) {
         for (var i = 0; i < box.length; i++) {
-          console.log(box[i].innerText, query)
+          console.log(box[i].innerText)
           if (box[i].innerText == query) {
             console.log(box[i].offsetTop)
             box[i].scrollIntoView(true)
@@ -1188,7 +1188,6 @@ export default {
         },
         body: JSON.stringify(data),
       }).then(res=>res.json()).then(data=> {
-        this.getHistory()
       })
     },
     getHistory() {
@@ -1238,6 +1237,12 @@ export default {
               that.chatData = JSON.parse(JSON.stringify(that.chatData));
               // console.log(that.chatData)
             })
+            that.chatData.sort((a, b) => b.time - a.time);
+
+            // 按时间正序排列内容（假设内容和问题在同一个数组中）
+            that.chatData.sort((a, b) => a.time - b.time);
+            console.log(that.chatData)
+
           })
           .catch(error => console.error('Error:', error));
     },

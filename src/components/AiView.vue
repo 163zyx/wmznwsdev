@@ -205,8 +205,8 @@
        getTopSession() {
          let self = this
          return new Promise((resolve, reject) => {
-           let url = window.location.href
-           // let url = 'https://officechat.emic.edu.cn/analyse/#/?token=833ed19522f34dd553a5e1f537ceed75';
+           // let url = window.location.href
+           let url = 'https://officechat.emic.edu.cn/analyse/#/?token=d7c7dae20c155b8de73a45c23beee362';
            let token = url.split('=')[1];
            fetch(`https://map.data.moe.edu.cn/rest/cas/validate?ticket=${token}`, {
              method: 'GET',
