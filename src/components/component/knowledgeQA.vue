@@ -1247,9 +1247,6 @@ export default {
               that.chatData = JSON.parse(JSON.stringify(that.chatData));
               // console.log(that.chatData)
             })
-
-            console.log(that.chatData)
-
           })
           .catch(error => console.error('Error:', error));
     },
